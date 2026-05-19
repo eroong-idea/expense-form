@@ -233,6 +233,10 @@
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
+    input::placeholder,
+    textarea::placeholder { color: transparent !important; }
+    select option[value=""] { display: none; }
+    .item-cat { color: inherit; }
   }
 </style>
 </head>
@@ -324,11 +328,11 @@
     <td colspan="8" style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:#1a1a1a;">
       <span id="amountKor" style="display:block;min-height:18px;"></span>
     </td>
-    <td colspan="2" style="text-align:center;font-size:11px;white-space:nowrap;">(₩</td>
-    <td colspan="7" style="text-align:right;font-weight:700;font-size:13px;padding-right:4px;">
+    <td colspan="2" style="text-align:center;font-size:11px;white-space:nowrap;border-right:none;">(₩</td>
+    <td colspan="7" style="text-align:right;font-weight:700;font-size:13px;padding-right:0;border-left:none;border-right:none;">
       <span id="amountNum" style="display:block;text-align:right;min-height:18px;"></span>
     </td>
-    <td style="font-size:11px;">)</td>
+    <td style="font-size:11px;border-left:none;">)</td>
   </tr>
 
   <!-- Row 4: 제목 / 지급방법 -->
@@ -376,8 +380,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row1">
@@ -402,8 +406,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row2">
@@ -428,8 +432,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row3">
@@ -454,8 +458,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row4">
@@ -480,8 +484,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row5">
@@ -506,8 +510,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row6">
@@ -532,8 +536,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row7">
@@ -558,8 +562,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row8">
@@ -584,8 +588,8 @@
             <option>비품구매</option>
           </optgroup>
         </select></td>
-    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
-    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
 
@@ -617,9 +621,9 @@
   <!-- 영수인 -->
   <tr class="recipient-row">
     <td colspan="7" class="label-cell">영 수 인 :</td>
-    <td colspan="13"><input type="text" id="recipient" placeholder="영수인 이름 입력"></td>
-    <td colspan="4" style="text-align:center;font-weight:700;">(인)</td>
-    <td colspan="1"></td>
+    <td colspan="13" style="border-right:none;"><input type="text" id="recipient" placeholder="영수인 이름 입력"></td>
+    <td colspan="4" style="text-align:center;font-weight:700;border-left:none;border-right:none;">(인)</td>
+    <td colspan="1" style="border-left:none;"></td>
   </tr>
 
   <!-- 빈 행 -->
@@ -639,6 +643,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
+// ── textarea 자동 높이 ──────────────────────────
+document.addEventListener('input', function(e) {
+  if (e.target.classList.contains('item-desc')) {
+    e.target.style.height = 'auto';
+    e.target.style.height = e.target.scrollHeight + 'px';
+  }
+});
+
+// ── 금액 콤마 포맷 ──────────────────────────────
+function formatAmt(el) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  el.value = raw ? parseInt(raw).toLocaleString('ko-KR') : '';
+  calcTotal();
+}
+
 // ── 회사명 변경 ──────────────────────────────
 function changeCompany() {
   const val = document.getElementById('companySelect').value.split('|');
@@ -681,7 +700,7 @@ function toKoreanNumber(n) {
 function calcTotal() {
   const amts = document.querySelectorAll('.item-amt');
   let sum = 0;
-  amts.forEach(a => { sum += parseInt(a.value) || 0; });
+  amts.forEach(a => { sum += parseInt(a.value.replace(/,/g, '')) || 0; });
   document.getElementById('totalDisplay').textContent = sum.toLocaleString('ko-KR');
   document.getElementById('amountKor').textContent = sum ? toKoreanNumber(sum) : '';
   document.getElementById('amountNum').textContent  = sum ? sum.toLocaleString('ko-KR') : '';
