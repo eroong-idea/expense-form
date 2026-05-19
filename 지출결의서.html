@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지출결의서 - 미스앤미스터㈜</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+  :root {
+    --border: #2a2a2a;
+    --bg: #f5f3ee;
+    --paper: #fffef9;
+    --accent: #1a1a1a;
+    --label-bg: #f0ede4;
+    --stamp-r: #c0392b;
+    --stamp-b: #1a5276;
+    --stamp-g: #1e8449;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 60px;
+    color: var(--accent);
+  }
+
+  /* ── 툴바 ── */
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: var(--accent);
+    padding: 10px 18px;
+    border-radius: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .toolbar span {
+    color: #aaa;
+    font-size: 11px;
+    letter-spacing: .05em;
+    margin-right: 6px;
+  }
+  .btn {
+    padding: 7px 18px;
+    border: none;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity .15s;
+  }
+  .btn:hover { opacity: .85; }
+  .btn-print { background: #fff; color: var(--accent); }
+  .btn-img   { background: #4a9eff; color: #fff; }
+  .btn-clear { background: #555; color: #ccc; }
+
+  /* ── 용지 (A4: 210×297mm → 794×1123px @96dpi) ── */
+  .paper {
+    background: var(--paper);
+    width: 794px;
+    min-height: 1123px;
+    padding: 40px 45px;
+    box-shadow: 0 4px 32px rgba(0,0,0,.15);
+    border: 1px solid #ddd;
+    position: relative;
+  }
+
+  /* ── 메인 테이블 ── */
+  table.form {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 12px;
+  }
+  table.form td {
+    border: 1px solid var(--border);
+    padding: 4px 6px;
+    vertical-align: middle;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  table.form input[type="text"],
+  table.form input[type="date"],
+  table.form input[type="number"],
+  table.form textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--accent);
+    padding: 0;
+    resize: none;
+  }
+  table.form textarea { min-height: 16px; overflow: hidden; }
+
+  .label-cell {
+    background: var(--label-bg);
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 11.5px;
+    letter-spacing: .03em;
+  }
+
+  /* ── 구분 셀렉트 ── */
+  .item-cat {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 11.5px;
+    color: var(--accent);
+    cursor: pointer;
+    text-align: center;
+    padding: 0 2px;
+  }
+  .item-cat option { font-size: 12px; }
+
+  /* ── 헤더 ── */
+  .header-row td { height: 72px; }
+  .title-cell {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: .12em;
+    vertical-align: middle;
+  }
+
+  /* ── 결재란 ── */
+  .stamp-box {
+    width: 60px;
+    text-align: center;
+    vertical-align: top;
+    padding: 0 !important;
+  }
+  .stamp-inner {
+    display: flex;
+    flex-direction: column;
+    height: 70px;
+  }
+  .stamp-title {
+    background: var(--label-bg);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 0;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .stamp-area {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+  }
+  .stamp-area input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 11px;
+    text-align: center;
+    outline: none;
+    color: var(--stamp-b);
+    font-weight: 600;
+  }
+
+  /* ── 금액 행 ── */
+  .amount-row td { height: 42px; }
+  .amount-won {
+    font-weight: 700;
+    font-size: 15px;
+    text-align: right;
+    padding-right: 8px !important;
+    letter-spacing: .02em;
+  }
+  #amountKor {
+    font-size: 12px;
+    color: #333;
+  }
+
+  /* ── 내역 행 ── */
+  .item-row td { height: 65px; }
+  .subtotal-row td {
+    background: var(--label-bg);
+    font-weight: 700;
+    text-align: center;
+  }
+  .total-row td {
+    background: #e8e4d8;
+    font-weight: 700;
+  }
+
+  /* ── 하단 ── */
+  .footer-row td {
+    text-align: center;
+    font-size: 11.5px;
+    padding: 6px 8px;
+  }
+  .date-display {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .05em;
+  }
+  .recipient-row td { height: 40px; }
+  .company-row td {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    padding: 6px;
+  }
+
+  /* ── 인쇄 ── */
+  @media print {
+    @page { size: A4; margin: 0; }
+    body { background: white; padding: 0; }
+    .toolbar { display: none !important; }
+    .paper { box-shadow: none; border: none; margin: 0; padding: 40px 45px; width: 794px; min-height: 1123px; }
+    table.form input, table.form textarea {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span>회사명</span>
+  <select id="companySelect" onchange="changeCompany()" style="padding:6px 10px;border:none;border-radius:4px;font-family:inherit;font-size:13px;font-weight:600;background:#fff;color:#1a1a1a;cursor:pointer;outline:none;">
+    <option value="미스앤미스터(주)|미 스 앤 미 스 터 주 식 회 사">미스앤미스터(주)</option>
+    <option value="해피투게더(주)|해 피 투 게 더 주 식 회 사">해피투게더(주)</option>
+    <option value="도나스데이|도 나 스 데 이">도나스데이</option>
+    <option value="한신우동 본점|한 신 우 동 본 점">한신우동 본점</option>
+    <option value="도시농원(주)|도 시 농 원 주 식 회 사">도시농원(주)</option>
+  </select>
+  <button class="btn btn-print" onclick="window.print()">🖨 인쇄</button>
+  <button class="btn btn-img"   onclick="saveImage()">🖼 이미지 저장</button>
+  <button class="btn btn-clear" onclick="clearForm()">↺ 초기화</button>
+</div>
+
+<div class="paper" id="paper">
+<table class="form">
+
+  <!-- 헤더: 제목 + 결재란 -->
+  <colgroup>
+    <col style="width:8%">  <!-- B -->
+    <col style="width:6%">  <!-- C -->
+    <col style="width:6%">  <!-- D -->
+    <col style="width:6%">  <!-- E -->
+    <col style="width:6%">  <!-- F -->
+    <col style="width:6%">  <!-- G -->
+    <col style="width:5%">  <!-- H -->
+    <col style="width:5%">  <!-- I -->
+    <col style="width:5%">  <!-- J -->
+    <col style="width:5%">  <!-- K -->
+    <col style="width:5%">  <!-- L -->
+    <col style="width:5%">  <!-- M -->
+    <col style="width:4%">  <!-- N -->
+    <col style="width:4%">  <!-- O -->
+    <col style="width:4%">  <!-- P -->
+    <col style="width:4%">  <!-- Q -->
+    <col style="width:4%">  <!-- R -->
+    <col style="width:3%">  <!-- S -->
+    <col style="width:3%">  <!-- T -->
+    <col style="width:3%">  <!-- U -->
+    <col style="width:3%">  <!-- V -->
+    <col style="width:3%">  <!-- W -->
+    <col style="width:3%">  <!-- X -->
+    <col style="width:3%">  <!-- Y -->
+    <col style="width:3%">  <!-- Z -->
+  </colgroup>
+
+  <!-- Row 1: 제목 + 결재란 -->
+  <tr class="header-row">
+    <td colspan="16" class="title-cell" id="formTitle">미스앤미스터(주) 지출결의서</td>
+    <td colspan="3" class="stamp-box" style="padding:0!important;">
+      <div class="stamp-inner">
+        <div class="stamp-title">담&nbsp;&nbsp;당</div>
+        <div class="stamp-area"><input type="text" id="s1" placeholder=""></div>
+      </div>
+    </td>
+    <td colspan="3" class="stamp-box" style="padding:0!important;">
+      <div class="stamp-inner">
+        <div class="stamp-title">관&nbsp;&nbsp;리</div>
+        <div class="stamp-area"><input type="text" id="s2" placeholder=""></div>
+      </div>
+    </td>
+    <td colspan="3" class="stamp-box" style="padding:0!important;">
+      <div class="stamp-inner">
+        <div class="stamp-title">대&nbsp;&nbsp;표</div>
+        <div class="stamp-area"><input type="text" id="s3" placeholder=""></div>
+      </div>
+    </td>
+  </tr>
+
+  <!-- Row 2: 지출일자 / 직급 / 성명 -->
+  <tr style="height:40px;">
+    <td colspan="5" class="label-cell">지 출 일 자</td>
+    <td colspan="6"><input type="date" id="expDate" onchange="updateDateDisplay()"></td>
+    <td colspan="3" class="label-cell">직&nbsp;&nbsp;&nbsp;급</td>
+    <td colspan="4"><input type="text" id="rank" placeholder="직급 입력"></td>
+    <td colspan="2" class="label-cell">성명</td>
+    <td colspan="5"><input type="text" id="name" placeholder="성명 입력" oninput="document.getElementById('recipient').value=this.value"></td>
+  </tr>
+
+  <!-- Row 3: 지출금액 -->
+  <tr class="amount-row">
+    <td colspan="5" class="label-cell">지 출 금 액</td>
+    <td colspan="2" class="label-cell" style="font-size:11px;">일 금</td>
+    <td colspan="8" style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:#1a1a1a;">
+      <span id="amountKor" style="display:block;min-height:18px;"></span>
+    </td>
+    <td colspan="2" style="text-align:center;font-size:11px;white-space:nowrap;">(₩</td>
+    <td colspan="7" style="text-align:right;font-weight:700;font-size:13px;padding-right:4px;">
+      <span id="amountNum" style="display:block;text-align:right;min-height:18px;"></span>
+    </td>
+    <td style="font-size:11px;">)</td>
+  </tr>
+
+  <!-- Row 4: 제목 / 현금지급 -->
+  <tr style="height:40px;">
+    <td colspan="5" class="label-cell">제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
+    <td colspan="10"><input type="text" id="subject" placeholder="제목 입력"></td>
+    <td colspan="10" style="text-align:center;">
+      현금지급 <input type="checkbox" id="cashPay" style="width:auto;"> &nbsp;
+      계좌이체 <input type="checkbox" id="transfer" style="width:auto;">
+    </td>
+  </tr>
+
+  <!-- Row 5: 헤더 행 -->
+  <tr style="height:34px;">
+    <td colspan="5" class="label-cell">구&nbsp;&nbsp;&nbsp;&nbsp;분</td>
+    <td colspan="9" class="label-cell">내&nbsp;&nbsp;&nbsp;&nbsp;역</td>
+    <td colspan="6" class="label-cell">금&nbsp;&nbsp;&nbsp;&nbsp;액</td>
+    <td colspan="5" class="label-cell">비&nbsp;&nbsp;&nbsp;&nbsp;고</td>
+  </tr>
+
+  <!-- 내역 입력 행 9개 -->
+  <tr class="item-row" id="row0">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row1">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row2">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row3">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row4">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row5">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row6">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row7">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+  <tr class="item-row" id="row8">
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
+          <option value="">-- 선택 --</option>
+          <optgroup label="── 일반경비 ──">
+            <option>소모품비</option>
+            <option>차량유지비</option>
+            <option>식대</option>
+            <option>경조사비</option>
+            <option>원부자재</option>
+          </optgroup>
+          <optgroup label="── 세무지출 ──">
+            <option>접대비</option>
+            <option>복리후생비</option>
+            <option>여비교통비</option>
+            <option>교육훈련비</option>
+            <option>광고선전비</option>
+            <option>임차료</option>
+            <option>수수료</option>
+            <option>수선비</option>
+            <option>비품구매</option>
+          </optgroup>
+        </select></td>
+    <td colspan="9"><input type="text" class="item-desc" placeholder="내역 입력"></td>
+    <td colspan="6"><input type="number" class="item-amt" placeholder="0" oninput="calcTotal()" style="text-align:right;"></td>
+    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
+  </tr>
+
+  <!-- 합계 행 -->
+  <tr class="subtotal-row" style="height:40px;">
+    <td colspan="5" class="label-cell">합&nbsp;&nbsp;&nbsp;계</td>
+    <td colspan="9"><input type="text" id="totalDesc" placeholder="합계 내역 (선택)"></td>
+    <td colspan="6" style="text-align:right;font-size:13px;" id="totalDisplay">0</td>
+    <td colspan="5"></td>
+  </tr>
+
+  <!-- 빈 행 -->
+  <tr style="height:24px;"><td colspan="25" style="border:none;"></td></tr>
+
+  <!-- 청구 문구 -->
+  <tr>
+    <td colspan="25" style="font-size:13px;letter-spacing:.04em;border:none;text-align:center;padding:10px 0 4px;font-size:13.5px;">
+      위 금액을 청구하오니 결재 바랍니다.
+    </td>
+  </tr>
+
+  <!-- 날짜 표시 -->
+  <tr>
+    <td colspan="25" style="border:none;text-align:center;padding:4px 0 8px;">
+      <span class="date-display" id="dateDisplay"></span>
+    </td>
+  </tr>
+
+  <!-- 영수인 -->
+  <tr class="recipient-row">
+    <td colspan="7" class="label-cell">영 수 인 :</td>
+    <td colspan="13"><input type="text" id="recipient" placeholder="영수인 이름 입력"></td>
+    <td colspan="4" style="text-align:center;font-weight:700;">(인)</td>
+    <td colspan="1"></td>
+  </tr>
+
+  <!-- 빈 행 -->
+  <tr style="height:24px;"><td colspan="25" style="border:none;"></td></tr>
+
+  <!-- 회사명 -->
+  <tr>
+    <td colspan="25" class="company-row" style="border-left:none;border-right:none;border-bottom:none;text-align:center;">
+      <span id="companyName">미 스 앤 미 스 터 주 식 회 사</span>
+    </td>
+  </tr>
+
+</table>
+</div>
+
+<!-- html2canvas CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+// ── 회사명 변경 ──────────────────────────────
+function changeCompany() {
+  const val = document.getElementById('companySelect').value.split('|');
+  const short = val[0];   // 예: 미스앤미스터(주)
+  const spaced = val[1];  // 예: 미 스 앤 미 스 터 주 식 회 사
+  document.getElementById('formTitle').textContent = short + ' 지출결의서';
+  document.getElementById('companyName').textContent = spaced;
+}
+
+// ── 한글 숫자 변환 ──────────────────────────
+function toKoreanNumber(n) {
+  if (!n || n === 0) return '영';
+  const units = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
+  const pos   = ['', '십', '백', '천'];
+  const bigPos = ['', '만', '억', '조'];
+  let result = '';
+  let num = Math.abs(Math.floor(n));
+  let bigIdx = 0;
+  while (num > 0) {
+    const chunk = num % 10000;
+    if (chunk !== 0) {
+      let chunkStr = '';
+      let tmp = chunk;
+      for (let i = 0; i < 4; i++) {
+        const d = tmp % 10;
+        if (d !== 0) {
+          chunkStr = (d === 1 && i > 0 ? '' : units[d]) + pos[i] + chunkStr;
+        }
+        tmp = Math.floor(tmp / 10);
+      }
+      result = chunkStr + bigPos[bigIdx] + result;
+    }
+    num = Math.floor(num / 10000);
+    bigIdx++;
+  }
+  return result + '원정';
+}
+
+// ── 내역 합산 → 일금(한글) + 우측(숫자) 자동 반영 ──
+function calcTotal() {
+  const amts = document.querySelectorAll('.item-amt');
+  let sum = 0;
+  amts.forEach(a => { sum += parseInt(a.value) || 0; });
+  document.getElementById('totalDisplay').textContent = sum.toLocaleString('ko-KR');
+  document.getElementById('amountKor').textContent = sum ? toKoreanNumber(sum) : '';
+  document.getElementById('amountNum').textContent  = sum ? sum.toLocaleString('ko-KR') : '';
+}
+
+// ── 날짜 표시 ──────────────────────────────
+function updateDateDisplay() {
+  const d = document.getElementById('expDate').value;
+  if (!d) { document.getElementById('dateDisplay').textContent = ''; return; }
+  const dt = new Date(d);
+  const y = dt.getFullYear(), m = dt.getMonth()+1, day = dt.getDate();
+  document.getElementById('dateDisplay').textContent =
+    `${y}년 ${m}월 ${day}일`;
+}
+
+// ── 이미지 저장 ──────────────────────────────
+function saveImage() {
+  const paper = document.getElementById('paper');
+  // 입력 값을 span으로 치환 (렌더링 정확도)
+  html2canvas(paper, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#fffef9',
+    logging: false,
+  }).then(canvas => {
+    const a = document.createElement('a');
+    const d = document.getElementById('expDate').value || 'draft';
+    a.download = `지출결의서_${d}.png`;
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+  });
+}
+
+// ── 초기화 ──────────────────────────────────
+function clearForm() {
+  if (!confirm('입력 내용을 모두 초기화하시겠습니까?')) return;
+  document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], textarea')
+    .forEach(el => el.value = '');
+  document.getElementById('amountKor').textContent = '';
+  document.getElementById('amountNum').textContent = '';
+  document.getElementById('totalDisplay').textContent = '0';
+  document.getElementById('dateDisplay').textContent = '';
+}
+
+// ── 초기 날짜 설정 ──────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('expDate').value = today;
+  updateDateDisplay();
+});
+</script>
+</body>
+</html>
