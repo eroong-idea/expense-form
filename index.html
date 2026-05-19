@@ -331,13 +331,17 @@
     <td style="font-size:11px;">)</td>
   </tr>
 
-  <!-- Row 4: 제목 / 현금지급 -->
+  <!-- Row 4: 제목 / 지급방법 -->
   <tr style="height:40px;">
     <td colspan="5" class="label-cell">제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
     <td colspan="10"><input type="text" id="subject" placeholder="제목 입력"></td>
     <td colspan="10" style="text-align:center;">
-      현금지급 <input type="checkbox" id="cashPay" style="width:auto;"> &nbsp;
-      계좌이체 <input type="checkbox" id="transfer" style="width:auto;">
+      <label style="cursor:pointer;margin-right:12px;">
+        <input type="radio" name="payMethod" value="cash" style="width:auto;cursor:pointer;"> 현금
+      </label>
+      <label style="cursor:pointer;">
+        <input type="radio" name="payMethod" value="card" style="width:auto;cursor:pointer;"> 카드
+      </label>
     </td>
   </tr>
 
