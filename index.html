@@ -800,6 +800,18 @@ function changeInvCompany() {
   document.getElementById('sup-fax').textContent   = c.fax;
 }
 
+// 수량/단가 콤마 포맷 처리
+function onInvNum(el, idx, field) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  invRows[idx][field] = raw;
+  const pos  = el.selectionStart;
+  const prev = el.value.length;
+  el.value   = raw ? parseInt(raw, 10).toLocaleString('ko-KR') : '';
+  const diff = el.value.length - prev;
+  try { el.setSelectionRange(pos + diff, pos + diff); } catch(e) {}
+  calcInvRow(idx);
+}
+
 // textarea 자동 높이 확장
 function autoGrow(el) {
   el.style.height = 'auto';
@@ -840,19 +852,10 @@ function renderInvRows() {
           oninput="invRows[${i}].item=this.value" style="text-align:left;"></td>
       <td><input type="text" value="${r.spec}" placeholder="규격"
           oninput="invRows[${i}].spec=this.value" style="text-align:center;"></td>
-      <td><input type="text" inputmode="numeric" value="${r.qty}" placeholder="0"
-          oninput="invRows[${i}].qty=this.value.replace(/,/g,'');calcInvRow(${i})" class="right"></td>
+      <td><input type="text" inputmode="numeric" value="${r.qty ? Number(r.qty).toLocaleString('ko-KR') : ''}" placeholder="0"
+          oninput="onInvNum(this,${i},'qty')" class="right"></td>
       <td><input type="text" inputmode="numeric" value="${r.price ? Number(r.price).toLocaleString('ko-KR') : ''}" placeholder="0"
-          oninput="
-            const raw=this.value.replace(/[^0-9]/g,'');
-            invRows[${i}].price=raw;
-            const pos=this.selectionStart;
-            const prev=this.value.length;
-            this.value=raw?parseInt(raw).toLocaleString('ko-KR'):'';
-            const diff=this.value.length-prev;
-            this.setSelectionRange(pos+diff,pos+diff);
-            calcInvRow(${i});
-          " class="right"></td>
+          oninput="onInvNum(this,${i},'price')" class="right"></td>
       <td class="inv-calc" id="inv-supply-${r.id}">-</td>
       <td class="inv-calc" id="inv-tax-${r.id}">-</td>
       <td class="no-print" style="text-align:center;border:1px solid var(--border);">
@@ -895,16 +898,34 @@ function calcInvTotals() {
 function saveInvoiceImage() {
   const paper = document.getElementById('invoice-paper');
 
-  // 1) placeholder 임시 제거
-  const inputs = paper.querySelectorAll('input, textarea');
-  const placeholders = [];
-  inputs.forEach((el, i) => { placeholders[i] = el.placeholder; el.placeholder = ''; });
+  // ── 1) input/textarea → span 으로 교체 (html2canvas가 input 값을 못 읽는 문제 해결) ──
+  const replacements = [];
+  paper.querySelectorAll('input, textarea').forEach(el => {
+    const span = document.createElement('span');
+    span.textContent = el.value;
+    // 원본 스타일 그대로 복사
+    span.style.cssText = [
+      'display:block',
+      'font-family:inherit',
+      'font-size:12px',
+      'color:#1a1a1a',
+      'white-space:pre-wrap',
+      'word-break:break-all',
+      'line-height:1.5',
+      'min-height:16px',
+      el.style.textAlign ? 'text-align:' + el.style.textAlign : '',
+      el.classList.contains('right') ? 'text-align:right' : '',
+    ].filter(Boolean).join(';');
+    el.parentNode.insertBefore(span, el);
+    el.style.display = 'none';
+    replacements.push({ el, span });
+  });
 
-  // 2) no-print 요소 임시 숨김
+  // ── 2) no-print 요소 숨김 ──
   const noPrint = paper.querySelectorAll('.no-print');
-  noPrint.forEach(el => { el.dataset.prevDisplay = el.style.display; el.style.display = 'none'; });
+  noPrint.forEach(el => { el.dataset.pv = el.style.display; el.style.display = 'none'; });
 
-  // 3) 실제 렌더링 높이 측정 (min-height 무관)
+  // ── 3) 캡처 ──
   const h = paper.offsetHeight;
   const w = paper.offsetWidth;
 
@@ -916,20 +937,16 @@ function saveInvoiceImage() {
     width: w,
     height: h,
   }).then(canvas => {
-    // 4) 복원
-    inputs.forEach((el, i) => { el.placeholder = placeholders[i]; });
-    noPrint.forEach(el => { el.style.display = el.dataset.prevDisplay || ''; });
-
-    // 5) 실제 콘텐츠 높이만큼 크롭
-    const cropped = document.createElement('canvas');
-    cropped.width  = canvas.width;
-    cropped.height = canvas.height;
-    const ctx = cropped.getContext('2d');
-    ctx.drawImage(canvas, 0, 0);
+    // ── 4) 복원 ──
+    replacements.forEach(({ el, span }) => {
+      el.style.display = '';
+      span.parentNode.removeChild(span);
+    });
+    noPrint.forEach(el => { el.style.display = el.dataset.pv || ''; });
 
     const a = document.createElement('a');
-    a.download = `납부영수증_${new Date().toISOString().slice(0,10)}.png`;
-    a.href = cropped.toDataURL('image/png');
+    a.download = '납부영수증_' + new Date().toISOString().slice(0, 10) + '.png';
+    a.href = canvas.toDataURL('image/png');
     a.click();
   });
 }
