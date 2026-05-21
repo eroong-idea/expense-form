@@ -806,6 +806,12 @@ function autoGrow(el) {
   el.style.height = el.scrollHeight + 'px';
 }
 
+// 단가 콤마 포맷
+function formatInvPrice(el) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  el.value = raw ? parseInt(raw).toLocaleString('ko-KR') : '';
+}
+
 let invRows = [];
 
 function addInvRow() {
@@ -834,10 +840,10 @@ function renderInvRows() {
           oninput="invRows[${i}].item=this.value" style="text-align:left;"></td>
       <td><input type="text" value="${r.spec}" placeholder="규격"
           oninput="invRows[${i}].spec=this.value" style="text-align:center;"></td>
-      <td><input type="number" value="${r.qty}" placeholder="0" min="0"
-          oninput="invRows[${i}].qty=this.value;calcInvRow(${i})" class="right"></td>
-      <td><input type="text" value="${r.price ? Number(r.price).toLocaleString('ko-KR') : ''}" placeholder="0"
-          oninput="invRows[${i}].price=this.value.replace(/,/g,'');calcInvRow(${i})" class="right"></td>
+      <td><input type="text" inputmode="numeric" value="${r.qty}" placeholder="0"
+          oninput="invRows[${i}].qty=this.value.replace(/,/g,'');calcInvRow(${i})" class="right"></td>
+      <td><input type="text" inputmode="numeric" value="${r.price ? Number(r.price).toLocaleString('ko-KR') : ''}" placeholder="0"
+          oninput="invRows[${i}].price=this.value.replace(/,/g,'');formatInvPrice(this);calcInvRow(${i})" class="right"></td>
       <td class="inv-calc" id="inv-supply-${r.id}">-</td>
       <td class="inv-calc" id="inv-tax-${r.id}">-</td>
       <td class="no-print" style="text-align:center;border:1px solid var(--border);">
@@ -889,12 +895,24 @@ function saveInvoiceImage() {
   const noPrint = paper.querySelectorAll('.no-print');
   noPrint.forEach(el => { el.dataset.prevDisplay = el.style.display; el.style.display = 'none'; });
 
+  // 3) 실제 콘텐츠 높이로 min-height 임시 확장 (잘림 방지)
+  const prevMinH = paper.style.minHeight;
+  paper.style.minHeight = paper.scrollHeight + 'px';
+
   html2canvas(paper, {
-    scale: 2, useCORS: true, backgroundColor: '#fffef9', logging: false,
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#fffef9',
+    logging: false,
+    width: paper.scrollWidth,
+    height: paper.scrollHeight,
+    windowWidth: paper.scrollWidth,
+    windowHeight: paper.scrollHeight,
   }).then(canvas => {
-    // 3) 복원
+    // 4) 복원
     inputs.forEach((el, i) => { el.placeholder = placeholders[i]; });
     noPrint.forEach(el => { el.style.display = el.dataset.prevDisplay || ''; });
+    paper.style.minHeight = prevMinH;
 
     const a = document.createElement('a');
     a.download = `납부영수증_${new Date().toISOString().slice(0,10)}.png`;
