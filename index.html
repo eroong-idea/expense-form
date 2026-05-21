@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>지출결의서 - 미스앤미스터㈜</title>
+<title>업무서식 - 미스앤미스터㈜</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
@@ -31,6 +31,34 @@
     color: var(--accent);
   }
 
+  /* ── 탭 네비게이션 ── */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    background: var(--accent);
+    border-radius: 8px;
+    overflow: hidden;
+    width: 794px;
+  }
+  .tab-nav button {
+    flex: 1;
+    padding: 11px 20px;
+    border: none;
+    background: transparent;
+    color: #888;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: .04em;
+    transition: all .15s;
+    border-right: 1px solid #333;
+  }
+  .tab-nav button:last-child { border-right: none; }
+  .tab-nav button.active { background: #fff; color: var(--accent); }
+  .tab-nav button:hover:not(.active) { background: #2a2a2a; color: #fff; }
+
   /* ── 툴바 ── */
   .toolbar {
     display: flex;
@@ -41,6 +69,7 @@
     border-radius: 8px;
     align-items: center;
     flex-wrap: wrap;
+    width: 794px;
   }
   .toolbar span {
     color: #aaa;
@@ -63,7 +92,7 @@
   .btn-img   { background: #4a9eff; color: #fff; }
   .btn-clear { background: #555; color: #ccc; }
 
-  /* ── 용지 (A4: 210×297mm → 794×1123px @96dpi) ── */
+  /* ── 용지 ── */
   .paper {
     background: var(--paper);
     width: 794px;
@@ -74,7 +103,7 @@
     position: relative;
   }
 
-  /* ── 메인 테이블 ── */
+  /* ── 지출결의서 공통 ── */
   table.form {
     width: 100%;
     border-collapse: collapse;
@@ -112,135 +141,209 @@
     font-size: 11.5px;
     letter-spacing: .03em;
   }
-
-  /* ── 구분 셀렉트 ── */
   .item-cat {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: 11.5px;
-    color: var(--accent);
-    cursor: pointer;
-    text-align: center;
-    padding: 0 2px;
+    width: 100%; border: none; outline: none; background: transparent;
+    font-family: inherit; font-size: 11.5px; color: var(--accent);
+    cursor: pointer; text-align: center; padding: 0 2px;
   }
   .item-cat option { font-size: 12px; }
-
-  /* ── 헤더 ── */
   .header-row td { height: 72px; }
   .title-cell {
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center;
-    letter-spacing: .12em;
-    vertical-align: middle;
+    font-size: 18px; font-weight: 700; text-align: center;
+    letter-spacing: .12em; vertical-align: middle;
   }
-
-  /* ── 결재란 ── */
-  .stamp-box {
-    width: 60px;
-    text-align: center;
-    vertical-align: top;
-    padding: 0 !important;
-  }
-  .stamp-inner {
-    display: flex;
-    flex-direction: column;
-    height: 70px;
-  }
+  .stamp-box { width: 60px; text-align: center; vertical-align: top; padding: 0 !important; }
+  .stamp-inner { display: flex; flex-direction: column; height: 70px; }
   .stamp-title {
-    background: var(--label-bg);
-    font-size: 10px;
-    font-weight: 700;
-    padding: 3px 0;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
+    background: var(--label-bg); font-size: 10px; font-weight: 700;
+    padding: 3px 0; text-align: center; border-bottom: 1px solid var(--border);
   }
-  .stamp-area {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-  }
+  .stamp-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 4px; }
   .stamp-area input {
-    width: 100%;
-    border: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: 11px;
-    text-align: center;
-    outline: none;
-    color: var(--stamp-b);
-    font-weight: 600;
+    width: 100%; border: none; background: transparent; font-family: inherit;
+    font-size: 11px; text-align: center; outline: none; color: var(--stamp-b); font-weight: 600;
   }
-
-  /* ── 금액 행 ── */
   .amount-row td { height: 42px; }
-  .amount-won {
-    font-weight: 700;
-    font-size: 15px;
-    text-align: right;
-    padding-right: 8px !important;
-    letter-spacing: .02em;
-  }
-  #amountKor {
-    font-size: 12px;
-    color: #333;
-  }
-
-  /* ── 내역 행 ── */
   .item-row td { height: 65px; }
-  .subtotal-row td {
-    background: var(--label-bg);
-    font-weight: 700;
-    text-align: center;
-  }
-  .total-row td {
-    background: #e8e4d8;
-    font-weight: 700;
-  }
-
-  /* ── 하단 ── */
-  .footer-row td {
-    text-align: center;
-    font-size: 11.5px;
-    padding: 6px 8px;
-  }
-  .date-display {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: .05em;
-  }
+  .subtotal-row td { background: var(--label-bg); font-weight: 700; text-align: center; }
+  .footer-row td { text-align: center; font-size: 11.5px; padding: 6px 8px; }
+  .date-display { font-size: 13px; font-weight: 600; letter-spacing: .05em; }
   .recipient-row td { height: 40px; }
   .company-row td {
-    text-align: center;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: .2em;
-    padding: 6px;
+    text-align: center; font-size: 14px; font-weight: 700;
+    letter-spacing: .2em; padding: 6px;
   }
 
-  /* ── 인쇄 ── */
+  /* ══ 간이 명세서 스타일 ══ */
+  .inv-paper {
+    background: var(--paper);
+    width: 794px;
+    min-height: 1123px;
+    padding: 40px 45px;
+    box-shadow: 0 4px 32px rgba(0,0,0,.15);
+    border: 1px solid #ddd;
+  }
+
+  .inv-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  table.inv-main {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+  table.inv-main td, table.inv-main th {
+    border: 1px solid var(--border);
+    padding: 5px 7px;
+    vertical-align: middle;
+  }
+  table.inv-main th {
+    background: var(--label-bg);
+    font-weight: 700;
+    text-align: center;
+    font-size: 11.5px;
+    letter-spacing: .03em;
+  }
+  table.inv-main input[type="text"],
+  table.inv-main input[type="number"],
+  table.inv-main input[type="date"] {
+    width: 100%; border: none; outline: none; background: transparent;
+    font-family: inherit; font-size: 12px; color: var(--accent); padding: 0;
+  }
+
+  /* ── 공급받는자/공급자 통합 테이블 ── */
+  .inv-unified-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 12px;
+    margin-bottom: 0;
+  }
+  .inv-unified-table td {
+    border: 1px solid var(--border);
+    padding: 5px 7px;
+    vertical-align: middle;
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+  .inv-section-hd {
+    background: var(--label-bg);
+    font-weight: 700;
+    font-size: 11.5px;
+    text-align: center;
+    letter-spacing: .06em;
+    padding: 5px 0 !important;
+    border: 1px solid var(--border);
+  }
+  .inv-divider {
+    border: none !important;
+    background: var(--bg);
+    width: 10px;
+    padding: 0 !important;
+  }
+  .ulbl {
+    background: var(--label-bg);
+    font-weight: 700;
+    font-size: 11px;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid var(--border);
+  }
+  .inv-unified-table textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--accent);
+    resize: none;
+    overflow: hidden;
+    line-height: 1.5;
+    padding: 0;
+    display: block;
+    min-height: 18px;
+    word-break: break-all;
+  }
+  .inv-fixed {
+    font-size: 12px;
+    color: var(--accent);
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+
+  .inv-items-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  .inv-items-table th {
+    background: var(--label-bg); font-weight: 700; text-align: center;
+    font-size: 11px; border: 1px solid var(--border); padding: 5px 4px;
+    letter-spacing: .02em;
+  }
+  .inv-items-table td {
+    border: 1px solid var(--border); padding: 4px 5px; vertical-align: middle;
+  }
+  .inv-items-table td input {
+    width: 100%; border: none; outline: none; background: transparent;
+    font-family: inherit; font-size: 12px; color: var(--accent);
+    text-align: center; padding: 0;
+  }
+  .inv-items-table td input.right { text-align: right; }
+  .inv-items-table .inv-calc { text-align: right; font-size: 12px; padding: 4px 6px; }
+  .inv-foot td {
+    background: var(--label-bg); font-weight: 700; font-size: 12px;
+    border: 1px solid var(--border); padding: 5px 7px; text-align: center;
+  }
+  .inv-foot .right { text-align: right; }
+
+  /* (inv-section-title 제거됨 → inv-section-hd로 통합) */
+
+  /* no-print: 인쇄/이미지 저장 시 숨김 */
+  .no-print { /* 화면에서는 표시 */ }
+
+  /* 인쇄 */
   @media print {
     @page { size: A4; margin: 0; }
     body { background: white; padding: 0; }
-    .toolbar { display: none !important; }
-    .paper { box-shadow: none; border: none; margin: 0; padding: 40px 45px; width: 794px; min-height: 1123px; }
-    table.form input, table.form textarea {
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
+    .toolbar, .tab-nav { display: none !important; }
+    .no-print { display: none !important; }
+    .paper, .inv-paper {
+      box-shadow: none; border: none; margin: 0;
+      padding: 40px 45px; width: 794px; min-height: 1123px;
     }
-    input::placeholder,
-    textarea::placeholder { color: transparent !important; }
+    table.form input, table.form textarea,
+    table.inv-main input, .inv-party-table input, .inv-items-table td input {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    input::placeholder, textarea::placeholder { color: transparent !important; }
+    .inv-party-table input::placeholder { color: transparent !important; }
+    .inv-items-table td input::placeholder { color: transparent !important; }
     select option[value=""] { display: none; }
     .item-cat { color: inherit; }
+    #expense-section, #invoice-section { display: block !important; }
   }
 </style>
 </head>
 <body>
+
+<!-- ══ 탭 네비게이션 ══ -->
+<div class="tab-nav">
+  <button class="active" onclick="switchTab('expense')">📋 지출결의서</button>
+  <button onclick="switchTab('invoice')">🧾 간이 명세서 (납부 영수증)</button>
+</div>
+
+<!-- ══════════════════════════════════
+     지출결의서 섹션
+══════════════════════════════════ -->
+<div id="expense-section">
 
 <div class="toolbar">
   <span>회사명</span>
@@ -248,44 +351,27 @@
     <option value="미스앤미스터(주)|미 스 앤 미 스 터 주 식 회 사">미스앤미스터(주)</option>
     <option value="해피투게더(주)|해 피 투 게 더 주 식 회 사">해피투게더(주)</option>
     <option value="도나스데이|도 나 스 데 이">도나스데이</option>
-    <option value="한신우동 본점|한 신 우 동 본 점">한신우동 본점</option>
+    <option value="한신우동|한 신 우 동">한신우동</option>
     <option value="도시농원(주)|도 시 농 원 주 식 회 사">도시농원(주)</option>
   </select>
   <button class="btn btn-print" onclick="window.print()">🖨 인쇄</button>
-  <button class="btn btn-img"   onclick="saveImage()">🖼 이미지 저장</button>
-  <button class="btn btn-clear" onclick="clearForm()">↺ 초기화</button>
+  <button class="btn btn-img"   onclick="saveExpenseImage()">🖼 이미지 저장</button>
+  <button class="btn btn-clear" onclick="clearExpenseForm()">↺ 초기화</button>
 </div>
 
-<div class="paper" id="paper">
+<div class="paper" id="expense-paper">
 <table class="form">
 
-  <!-- 헤더: 제목 + 결재란 -->
   <colgroup>
-    <col style="width:8%">  <!-- B -->
-    <col style="width:6%">  <!-- C -->
-    <col style="width:6%">  <!-- D -->
-    <col style="width:6%">  <!-- E -->
-    <col style="width:6%">  <!-- F -->
-    <col style="width:6%">  <!-- G -->
-    <col style="width:5%">  <!-- H -->
-    <col style="width:5%">  <!-- I -->
-    <col style="width:5%">  <!-- J -->
-    <col style="width:5%">  <!-- K -->
-    <col style="width:5%">  <!-- L -->
-    <col style="width:5%">  <!-- M -->
-    <col style="width:4%">  <!-- N -->
-    <col style="width:4%">  <!-- O -->
-    <col style="width:4%">  <!-- P -->
-    <col style="width:4%">  <!-- Q -->
-    <col style="width:4%">  <!-- R -->
-    <col style="width:3%">  <!-- S -->
-    <col style="width:3%">  <!-- T -->
-    <col style="width:3%">  <!-- U -->
-    <col style="width:3%">  <!-- V -->
-    <col style="width:3%">  <!-- W -->
-    <col style="width:3%">  <!-- X -->
-    <col style="width:3%">  <!-- Y -->
-    <col style="width:3%">  <!-- Z -->
+    <col style="width:8%"><col style="width:6%"><col style="width:6%">
+    <col style="width:6%"><col style="width:6%"><col style="width:6%">
+    <col style="width:5%"><col style="width:5%"><col style="width:5%">
+    <col style="width:5%"><col style="width:5%"><col style="width:5%">
+    <col style="width:4%"><col style="width:4%"><col style="width:4%">
+    <col style="width:4%"><col style="width:4%"><col style="width:3%">
+    <col style="width:3%"><col style="width:3%"><col style="width:3%">
+    <col style="width:3%"><col style="width:3%"><col style="width:3%">
+    <col style="width:3%">
   </colgroup>
 
   <!-- Row 1: 제목 + 결재란 -->
@@ -318,7 +404,7 @@
     <td colspan="3" class="label-cell">직&nbsp;&nbsp;&nbsp;급</td>
     <td colspan="4"><input type="text" id="rank" placeholder="직급 입력"></td>
     <td colspan="2" class="label-cell">성명</td>
-    <td colspan="5"><input type="text" id="name" placeholder="성명 입력" oninput="document.getElementById('recipient').value=this.value"></td>
+    <td colspan="5"><input type="text" id="expName" placeholder="성명 입력" oninput="document.getElementById('recipient').value=this.value"></td>
   </tr>
 
   <!-- Row 3: 지출금액 -->
@@ -357,238 +443,58 @@
     <td colspan="5" class="label-cell">비&nbsp;&nbsp;&nbsp;&nbsp;고</td>
   </tr>
 
-  <!-- 내역 입력 행 9개 -->
+  <!-- 내역 입력 행 (9개) -->
   <tr class="item-row" id="row0">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row1">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row2">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row3">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row4">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row5">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row6">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row7">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
   <tr class="item-row" id="row8">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat">
-          <option value="">-- 선택 --</option>
-          <optgroup label="── 일반경비 ──">
-            <option>소모품비</option>
-            <option>차량유지비</option>
-            <option>식대</option>
-            <option>경조사비</option>
-            <option>원부자재</option>
-          </optgroup>
-          <optgroup label="── 세무지출 ──">
-            <option>접대비</option>
-            <option>복리후생비</option>
-            <option>여비교통비</option>
-            <option>교육훈련비</option>
-            <option>광고선전비</option>
-            <option>임차료</option>
-            <option>수수료</option>
-            <option>수선비</option>
-            <option>비품구매</option>
-          </optgroup>
-        </select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;resize:none;line-height:1.5;overflow:hidden;"></textarea></td>
+    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
+    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
     <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
     <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
   </tr>
@@ -601,24 +507,20 @@
     <td colspan="5"></td>
   </tr>
 
-  <!-- 빈 행 -->
   <tr style="height:24px;"><td colspan="25" style="border:none;"></td></tr>
 
-  <!-- 청구 문구 -->
   <tr>
-    <td colspan="25" style="font-size:13px;letter-spacing:.04em;border:none;text-align:center;padding:10px 0 4px;font-size:13.5px;">
+    <td colspan="25" style="font-size:13.5px;letter-spacing:.04em;border:none;text-align:center;padding:10px 0 4px;">
       위 금액을 청구하오니 결재 바랍니다.
     </td>
   </tr>
 
-  <!-- 날짜 표시 -->
   <tr>
     <td colspan="25" style="border:none;text-align:center;padding:4px 0 8px;">
       <span class="date-display" id="dateDisplay"></span>
     </td>
   </tr>
 
-  <!-- 영수인 -->
   <tr class="recipient-row">
     <td colspan="7" class="label-cell">영 수 인 :</td>
     <td colspan="13" style="border-right:none;"><input type="text" id="recipient" placeholder="영수인 이름 입력"></td>
@@ -626,10 +528,8 @@
     <td colspan="1" style="border-left:none;"></td>
   </tr>
 
-  <!-- 빈 행 -->
   <tr style="height:24px;"><td colspan="25" style="border:none;"></td></tr>
 
-  <!-- 회사명 -->
   <tr>
     <td colspan="25" class="company-row" style="border-left:none;border-right:none;border-bottom:none;text-align:center;">
       <span id="companyName">미 스 앤 미 스 터 주 식 회 사</span>
@@ -638,12 +538,166 @@
 
 </table>
 </div>
+</div><!-- /expense-section -->
 
-<!-- html2canvas CDN -->
+
+<!-- ══════════════════════════════════
+     간이 명세서 (납부 영수증) 섹션
+══════════════════════════════════ -->
+<div id="invoice-section" style="display:none;">
+
+<div class="toolbar">
+  <span>공급자</span>
+  <select id="invCompanySelect" onchange="changeInvCompany()" style="padding:6px 10px;border:none;border-radius:4px;font-family:inherit;font-size:13px;font-weight:600;background:#fff;color:#1a1a1a;cursor:pointer;outline:none;">
+    <option value="missmister">미스앤미스터(주)</option>
+    <option value="happytogether">해피투게더(주)</option>
+    <option value="hanshinudon">한신우동</option>
+    <option value="cityfarming">도시농원(주)</option>
+  </select>
+  <button class="btn btn-print" onclick="printInvoice()">🖨 인쇄</button>
+  <button class="btn btn-img"   onclick="saveInvoiceImage()">🖼 이미지 저장</button>
+  <button class="btn btn-clear" onclick="clearInvoiceForm()">↺ 초기화</button>
+</div>
+
+<div class="inv-paper" id="invoice-paper">
+
+  <div class="inv-title">납 &nbsp; 부 &nbsp; 영 &nbsp; 수 &nbsp; 증</div>
+
+  <!-- 공급받는자 / 공급자: 단일 테이블로 행 높이 일치 -->
+  <table class="inv-unified-table">
+    <colgroup>
+      <!-- 공급받는 자 쪽 -->
+      <col style="width:70px">  <!-- 라벨 -->
+      <col>                      <!-- 값1 -->
+      <col style="width:35px">  <!-- 서브라벨 -->
+      <col>                      <!-- 값2 -->
+      <!-- 구분선 -->
+      <col style="width:10px">
+      <!-- 공급자 쪽 -->
+      <col style="width:70px">  <!-- 라벨 -->
+      <col>                      <!-- 값1 -->
+      <col style="width:35px">  <!-- 서브라벨 -->
+      <col>                      <!-- 값2 -->
+    </colgroup>
+    <!-- 헤더행 -->
+    <tr>
+      <td colspan="4" class="inv-section-hd">공 급 받 는 자</td>
+      <td class="inv-divider" rowspan="5"></td>
+      <td colspan="4" class="inv-section-hd">공 급 자</td>
+    </tr>
+    <!-- 행1: 상호/성명 -->
+    <tr>
+      <td class="ulbl">상호(법인명)</td>
+      <td><textarea id="i-buyer-biz" placeholder="상호명 입력" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td class="ulbl">성명</td>
+      <td><textarea id="i-buyer-name" placeholder="성명" rows="1" oninput="autoGrow(this)"></textarea></td>
+
+      <td class="ulbl">상호(법인명)</td>
+      <td class="inv-fixed" id="sup-biz">미스앤미스터㈜</td>
+      <td class="ulbl">성명</td>
+      <td class="inv-fixed" id="sup-name">공호식, 박정혜</td>
+    </tr>
+    <!-- 행2: 등록번호(공급자) / 사업장주소(공급받는자) -->
+    <tr>
+      <td class="ulbl">사업장 주소</td>
+      <td colspan="3"><textarea id="i-buyer-addr" placeholder="주소 입력" rows="1" oninput="autoGrow(this)"></textarea></td>
+
+      <td class="ulbl">등록번호</td>
+      <td colspan="3" class="inv-fixed" id="sup-regno">811-88-00636</td>
+    </tr>
+    <!-- 행3: 전화/팩스 -->
+    <tr>
+      <td class="ulbl">전화번호</td>
+      <td><textarea id="i-buyer-tel" placeholder="000-0000-0000" rows="1" oninput="autoGrow(this)"></textarea></td>
+      <td class="ulbl">팩스</td>
+      <td><textarea id="i-buyer-fax" placeholder="팩스번호" rows="1" oninput="autoGrow(this)"></textarea></td>
+
+      <td class="ulbl">사업장 주소</td>
+      <td colspan="3" class="inv-fixed" id="sup-addr">경기도 수원시 팔달구 효원로291번길53, 6층 602-1호</td>
+    </tr>
+    <!-- 행4: 합계금액(공급받는자) / 전화+팩스(공급자) -->
+    <tr>
+      <td class="ulbl">합계금액</td>
+      <td colspan="3" id="i-buyer-total" style="font-weight:700;font-size:13px;">-</td>
+
+      <td class="ulbl">전화번호</td>
+      <td class="inv-fixed" id="sup-tel">031)548-1334</td>
+      <td class="ulbl">팩스</td>
+      <td class="inv-fixed" id="sup-fax">031-548-1336</td>
+    </tr>
+  </table>
+
+  <!-- 품목 테이블 -->
+  <div style="margin-top:16px;">
+    <table class="inv-items-table" id="inv-items-table">
+      <thead>
+        <tr>
+          <th style="width:42px;">년</th>
+          <th style="width:30px;">월</th>
+          <th style="width:30px;">일</th>
+          <th>품 목</th>
+          <th style="width:65px;">규 격</th>
+          <th style="width:52px;">수 량</th>
+          <th style="width:80px;">단 가</th>
+          <th style="width:90px;">공급가액</th>
+          <th style="width:75px;">세 액</th>
+          <th class="no-print" style="width:28px;background:var(--label-bg);border:1px solid var(--border);">삭제</th>
+        </tr>
+      </thead>
+      <tbody id="inv-tbody"></tbody>
+      <tfoot>
+        <tr class="inv-foot">
+          <td colspan="5" style="text-align:center;letter-spacing:.06em;">각 &nbsp; 합 &nbsp; 계</td>
+          <td class="right" id="if-qty">-</td>
+          <td></td>
+          <td class="right" id="if-supply">-</td>
+          <td class="right" id="if-tax">-</td>
+          <td class="no-print" style="background:var(--label-bg);border:1px solid var(--border);"></td>
+        </tr>
+        <tr class="no-print">
+          <td colspan="10" style="border:none;padding:8px 0;">
+            <button onclick="addInvRow()"
+              style="width:100%;padding:7px 0;background:#27ae60;color:#fff;border:none;border-radius:4px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.04em;">
+              ＋ 품목 행 추가
+            </button>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- 비고 -->
+  <table style="width:100%;border-collapse:collapse;margin-top:8px;">
+    <tr>
+      <td style="width:55px;background:var(--label-bg);font-weight:700;font-size:11px;text-align:center;border:1px solid var(--border);padding:5px;">비 고</td>
+      <td style="border:1px solid var(--border);padding:5px 8px;">
+        <input type="text" id="i-note" placeholder="특이사항 기입" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;">
+      </td>
+    </tr>
+  </table>
+
+</div><!-- /inv-paper -->
+</div><!-- /invoice-section -->
+
+<!-- html2canvas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-// ── textarea 자동 높이 ──────────────────────────
+/* ════════════════════════════════
+   탭 전환
+════════════════════════════════ */
+function switchTab(tab) {
+  const isExpense = tab === 'expense';
+  document.getElementById('expense-section').style.display = isExpense ? '' : 'none';
+  document.getElementById('invoice-section').style.display = isExpense ? 'none' : '';
+  document.querySelectorAll('.tab-nav button').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && isExpense) || (i === 1 && !isExpense));
+  });
+}
+
+/* ════════════════════════════════
+   지출결의서 로직 (기존 그대로)
+════════════════════════════════ */
 document.addEventListener('input', function(e) {
   if (e.target.classList.contains('item-desc')) {
     e.target.style.height = 'auto';
@@ -651,53 +705,41 @@ document.addEventListener('input', function(e) {
   }
 });
 
-// ── 금액 콤마 포맷 ──────────────────────────────
 function formatAmt(el) {
   const raw = el.value.replace(/[^0-9]/g, '');
   el.value = raw ? parseInt(raw).toLocaleString('ko-KR') : '';
-  calcTotal();
+  calcExpenseTotal();
 }
 
-// ── 회사명 변경 ──────────────────────────────
 function changeCompany() {
   const val = document.getElementById('companySelect').value.split('|');
-  const short = val[0];   // 예: 미스앤미스터(주)
-  const spaced = val[1];  // 예: 미 스 앤 미 스 터 주 식 회 사
-  document.getElementById('formTitle').textContent = short + ' 지출결의서';
-  document.getElementById('companyName').textContent = spaced;
+  document.getElementById('formTitle').textContent = val[0] + ' 지출결의서';
+  document.getElementById('companyName').textContent = val[1];
 }
 
-// ── 한글 숫자 변환 ──────────────────────────
 function toKoreanNumber(n) {
   if (!n || n === 0) return '영';
   const units = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
   const pos   = ['', '십', '백', '천'];
   const bigPos = ['', '만', '억', '조'];
-  let result = '';
-  let num = Math.abs(Math.floor(n));
-  let bigIdx = 0;
+  let result = '', num = Math.abs(Math.floor(n)), bigIdx = 0;
   while (num > 0) {
     const chunk = num % 10000;
     if (chunk !== 0) {
-      let chunkStr = '';
-      let tmp = chunk;
+      let chunkStr = '', tmp = chunk;
       for (let i = 0; i < 4; i++) {
         const d = tmp % 10;
-        if (d !== 0) {
-          chunkStr = (d === 1 && i > 0 ? '' : units[d]) + pos[i] + chunkStr;
-        }
+        if (d !== 0) chunkStr = (d === 1 && i > 0 ? '' : units[d]) + pos[i] + chunkStr;
         tmp = Math.floor(tmp / 10);
       }
       result = chunkStr + bigPos[bigIdx] + result;
     }
-    num = Math.floor(num / 10000);
-    bigIdx++;
+    num = Math.floor(num / 10000); bigIdx++;
   }
   return result + '원정';
 }
 
-// ── 내역 합산 → 일금(한글) + 우측(숫자) 자동 반영 ──
-function calcTotal() {
+function calcExpenseTotal() {
   const amts = document.querySelectorAll('.item-amt');
   let sum = 0;
   amts.forEach(a => { sum += parseInt(a.value.replace(/,/g, '')) || 0; });
@@ -706,38 +748,27 @@ function calcTotal() {
   document.getElementById('amountNum').textContent  = sum ? sum.toLocaleString('ko-KR') : '';
 }
 
-// ── 날짜 표시 ──────────────────────────────
 function updateDateDisplay() {
   const d = document.getElementById('expDate').value;
   if (!d) { document.getElementById('dateDisplay').textContent = ''; return; }
   const dt = new Date(d);
-  const y = dt.getFullYear(), m = dt.getMonth()+1, day = dt.getDate();
   document.getElementById('dateDisplay').textContent =
-    `${y}년 ${m}월 ${day}일`;
+    `${dt.getFullYear()}년 ${dt.getMonth()+1}월 ${dt.getDate()}일`;
 }
 
-// ── 이미지 저장 ──────────────────────────────
-function saveImage() {
-  const paper = document.getElementById('paper');
-  // 입력 값을 span으로 치환 (렌더링 정확도)
-  html2canvas(paper, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: '#fffef9',
-    logging: false,
+function saveExpenseImage() {
+  html2canvas(document.getElementById('expense-paper'), {
+    scale: 2, useCORS: true, backgroundColor: '#fffef9', logging: false,
   }).then(canvas => {
     const a = document.createElement('a');
-    const d = document.getElementById('expDate').value || 'draft';
-    a.download = `지출결의서_${d}.png`;
-    a.href = canvas.toDataURL('image/png');
-    a.click();
+    a.download = `지출결의서_${document.getElementById('expDate').value || 'draft'}.png`;
+    a.href = canvas.toDataURL('image/png'); a.click();
   });
 }
 
-// ── 초기화 ──────────────────────────────────
-function clearForm() {
-  if (!confirm('입력 내용을 모두 초기화하시겠습니까?')) return;
-  document.querySelectorAll('input[type="text"], input[type="date"], input[type="number"], textarea')
+function clearExpenseForm() {
+  if (!confirm('지출결의서 내용을 모두 초기화하시겠습니까?')) return;
+  document.querySelectorAll('#expense-paper input[type="text"], #expense-paper input[type="date"], textarea')
     .forEach(el => el.value = '');
   document.getElementById('amountKor').textContent = '';
   document.getElementById('amountNum').textContent = '';
@@ -745,11 +776,161 @@ function clearForm() {
   document.getElementById('dateDisplay').textContent = '';
 }
 
-// ── 초기 날짜 설정 ──────────────────────────
+/* ════════════════════════════════
+   간이 명세서 로직
+════════════════════════════════ */
+
+// 공급자 회사 데이터
+const INV_COMPANIES = {
+  missmister:   { biz:'미스앤미스터㈜',  name:'공호식, 박정혜', regno:'811-88-00636',  addr:'경기도 수원시 팔달구 효원로291번길53, 6층 602-1호',   tel:'031)548-1334',  fax:'031-548-1336' },
+  happytogether:{ biz:'해피투게더㈜',    name:'박정혜',         regno:'754-86-03262',  addr:'경기도 화성시 효행구 봉담읍 128',                       tel:'070-4153-2166', fax:'' },
+  hanshinudon:  { biz:'한신우동',         name:'박정혜',         regno:'108-51-01611',  addr:'경기도 수원시 팔달구 효원로291번길 53 1층',              tel:'031-233-7289',  fax:'' },
+  cityfarming:  { biz:'도시농원㈜',       name:'공호식',         regno:'730-88-03601',  addr:'경기도 수원시 팔달구 효원로291번길 53 602-1호',          tel:'031-548-1334',  fax:'031-548-1336' },
+};
+
+function changeInvCompany() {
+  const key = document.getElementById('invCompanySelect').value;
+  const c = INV_COMPANIES[key];
+  if (!c) return;
+  document.getElementById('sup-biz').textContent   = c.biz;
+  document.getElementById('sup-name').textContent  = c.name;
+  document.getElementById('sup-regno').textContent = c.regno;
+  document.getElementById('sup-addr').textContent  = c.addr;
+  document.getElementById('sup-tel').textContent   = c.tel;
+  document.getElementById('sup-fax').textContent   = c.fax;
+}
+
+// textarea 자동 높이 확장
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+let invRows = [];
+
+function addInvRow() {
+  const id = 'r' + Date.now();
+  invRows.push({ id, y:'', m:'', d:'', item:'', spec:'', qty:'', price:'' });
+  renderInvRows();
+}
+
+function removeInvRow(id) {
+  invRows = invRows.filter(r => r.id !== id);
+  renderInvRows();
+  calcInvTotals();
+}
+
+function renderInvRows() {
+  const tb = document.getElementById('inv-tbody');
+  tb.innerHTML = invRows.map((r, i) => `
+    <tr>
+      <td><input type="text" value="${r.y}" maxlength="4" placeholder="2026"
+          oninput="invRows[${i}].y=this.value" style="text-align:center;"></td>
+      <td><input type="text" value="${r.m}" maxlength="2" placeholder="05"
+          oninput="invRows[${i}].m=this.value" style="text-align:center;"></td>
+      <td><input type="text" value="${r.d}" maxlength="2" placeholder="21"
+          oninput="invRows[${i}].d=this.value" style="text-align:center;"></td>
+      <td><input type="text" value="${r.item}" placeholder="품목명"
+          oninput="invRows[${i}].item=this.value" style="text-align:left;"></td>
+      <td><input type="text" value="${r.spec}" placeholder="규격"
+          oninput="invRows[${i}].spec=this.value" style="text-align:center;"></td>
+      <td><input type="number" value="${r.qty}" placeholder="0" min="0"
+          oninput="invRows[${i}].qty=this.value;calcInvRow(${i})" class="right"></td>
+      <td><input type="text" value="${r.price ? Number(r.price).toLocaleString('ko-KR') : ''}" placeholder="0"
+          oninput="invRows[${i}].price=this.value.replace(/,/g,'');calcInvRow(${i})" class="right"></td>
+      <td class="inv-calc" id="inv-supply-${r.id}">-</td>
+      <td class="inv-calc" id="inv-tax-${r.id}">-</td>
+      <td class="no-print" style="text-align:center;border:1px solid var(--border);">
+        <button onclick="removeInvRow('${r.id}')"
+          style="background:none;border:none;cursor:pointer;color:#c0392b;font-size:14px;padding:0;line-height:1;">✕</button>
+      </td>
+    </tr>
+  `).join('');
+  invRows.forEach((_, i) => calcInvRow(i));
+}
+
+function calcInvRow(i) {
+  const r = invRows[i];
+  const qty = Number(r.qty) || 0;
+  const price = Number(r.price) || 0;
+  const supply = qty * price;
+  const tax = Math.round(supply * 0.1);
+  invRows[i]._supply = supply;
+  invRows[i]._tax = tax;
+  const supplyEl = document.getElementById('inv-supply-' + r.id);
+  const taxEl    = document.getElementById('inv-tax-'    + r.id);
+  if (supplyEl) supplyEl.textContent = supply ? supply.toLocaleString('ko-KR') : '-';
+  if (taxEl)    taxEl.textContent    = tax    ? tax.toLocaleString('ko-KR')    : '-';
+  calcInvTotals();
+}
+
+function calcInvTotals() {
+  const totalQty    = invRows.reduce((s, r) => s + (Number(r.qty) || 0), 0);
+  const totalSupply = invRows.reduce((s, r) => s + (r._supply || 0), 0);
+  const totalTax    = invRows.reduce((s, r) => s + (r._tax    || 0), 0);
+  const grandTotal  = totalSupply + totalTax;
+
+  document.getElementById('if-qty').textContent    = totalQty    ? totalQty.toLocaleString('ko-KR')    : '-';
+  document.getElementById('if-supply').textContent = totalSupply ? totalSupply.toLocaleString('ko-KR') : '-';
+  document.getElementById('if-tax').textContent    = totalTax    ? totalTax.toLocaleString('ko-KR')    : '-';
+  document.getElementById('i-buyer-total').textContent =
+    grandTotal ? '₩ ' + grandTotal.toLocaleString('ko-KR') : '-';
+}
+
+function saveInvoiceImage() {
+  const paper = document.getElementById('invoice-paper');
+
+  // 1) placeholder 임시 제거
+  const inputs = paper.querySelectorAll('input, textarea');
+  const placeholders = [];
+  inputs.forEach((el, i) => { placeholders[i] = el.placeholder; el.placeholder = ''; });
+
+  // 2) no-print 요소 임시 숨김
+  const noPrint = paper.querySelectorAll('.no-print');
+  noPrint.forEach(el => { el.dataset.prevDisplay = el.style.display; el.style.display = 'none'; });
+
+  html2canvas(paper, {
+    scale: 2, useCORS: true, backgroundColor: '#fffef9', logging: false,
+  }).then(canvas => {
+    // 3) 복원
+    inputs.forEach((el, i) => { el.placeholder = placeholders[i]; });
+    noPrint.forEach(el => { el.style.display = el.dataset.prevDisplay || ''; });
+
+    const a = document.createElement('a');
+    a.download = `납부영수증_${new Date().toISOString().slice(0,10)}.png`;
+    a.href = canvas.toDataURL('image/png'); a.click();
+  });
+}
+
+function printInvoice() {
+  // 인쇄 전 invoice-section 강제 표시 (탭이 숨겨진 경우 대비)
+  const sec = document.getElementById('invoice-section');
+  const prevDisplay = sec.style.display;
+  sec.style.display = '';
+  window.print();
+  sec.style.display = prevDisplay;
+}
+
+function clearInvoiceForm() {
+  if (!confirm('명세서 내용을 모두 초기화하시겠습니까?')) return;
+  ['i-buyer-biz','i-buyer-name','i-buyer-addr','i-buyer-tel','i-buyer-fax','i-note']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.value = ''; el.style.height = 'auto'; }
+    });
+  document.getElementById('i-buyer-total').textContent = '-';
+  invRows = [];
+  renderInvRows();
+  calcInvTotals();
+}
+
+/* ── 초기 설정 ── */
 window.addEventListener('DOMContentLoaded', () => {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('expDate').value = today;
   updateDateDisplay();
+  // 명세서 초기 빈 행 3개
+  addInvRow(); addInvRow(); addInvRow();
 });
 </script>
 </body>
