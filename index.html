@@ -178,8 +178,8 @@
   .inv-paper {
     background: var(--paper);
     width: 794px;
-    min-height: 1123px;
-    padding: 40px 45px;
+    min-height: auto;
+    padding: 40px 45px 60px;
     box-shadow: 0 4px 32px rgba(0,0,0,.15);
     border: 1px solid #ddd;
   }
@@ -843,7 +843,16 @@ function renderInvRows() {
       <td><input type="text" inputmode="numeric" value="${r.qty}" placeholder="0"
           oninput="invRows[${i}].qty=this.value.replace(/,/g,'');calcInvRow(${i})" class="right"></td>
       <td><input type="text" inputmode="numeric" value="${r.price ? Number(r.price).toLocaleString('ko-KR') : ''}" placeholder="0"
-          oninput="invRows[${i}].price=this.value.replace(/,/g,'');formatInvPrice(this);calcInvRow(${i})" class="right"></td>
+          oninput="
+            const raw=this.value.replace(/[^0-9]/g,'');
+            invRows[${i}].price=raw;
+            const pos=this.selectionStart;
+            const prev=this.value.length;
+            this.value=raw?parseInt(raw).toLocaleString('ko-KR'):'';
+            const diff=this.value.length-prev;
+            this.setSelectionRange(pos+diff,pos+diff);
+            calcInvRow(${i});
+          " class="right"></td>
       <td class="inv-calc" id="inv-supply-${r.id}">-</td>
       <td class="inv-calc" id="inv-tax-${r.id}">-</td>
       <td class="no-print" style="text-align:center;border:1px solid var(--border);">
@@ -895,28 +904,33 @@ function saveInvoiceImage() {
   const noPrint = paper.querySelectorAll('.no-print');
   noPrint.forEach(el => { el.dataset.prevDisplay = el.style.display; el.style.display = 'none'; });
 
-  // 3) 실제 콘텐츠 높이로 min-height 임시 확장 (잘림 방지)
-  const prevMinH = paper.style.minHeight;
-  paper.style.minHeight = paper.scrollHeight + 'px';
+  // 3) 실제 렌더링 높이 측정 (min-height 무관)
+  const h = paper.offsetHeight;
+  const w = paper.offsetWidth;
 
   html2canvas(paper, {
     scale: 2,
     useCORS: true,
     backgroundColor: '#fffef9',
     logging: false,
-    width: paper.scrollWidth,
-    height: paper.scrollHeight,
-    windowWidth: paper.scrollWidth,
-    windowHeight: paper.scrollHeight,
+    width: w,
+    height: h,
   }).then(canvas => {
     // 4) 복원
     inputs.forEach((el, i) => { el.placeholder = placeholders[i]; });
     noPrint.forEach(el => { el.style.display = el.dataset.prevDisplay || ''; });
-    paper.style.minHeight = prevMinH;
+
+    // 5) 실제 콘텐츠 높이만큼 크롭
+    const cropped = document.createElement('canvas');
+    cropped.width  = canvas.width;
+    cropped.height = canvas.height;
+    const ctx = cropped.getContext('2d');
+    ctx.drawImage(canvas, 0, 0);
 
     const a = document.createElement('a');
     a.download = `납부영수증_${new Date().toISOString().slice(0,10)}.png`;
-    a.href = canvas.toDataURL('image/png'); a.click();
+    a.href = cropped.toDataURL('image/png');
+    a.click();
   });
 }
 
