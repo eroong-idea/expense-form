@@ -1,985 +1,291 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>업무서식 - 미스앤미스터㈜</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
-
-  :root {
-    --border: #2a2a2a;
-    --bg: #f5f3ee;
-    --paper: #fffef9;
-    --accent: #1a1a1a;
-    --label-bg: #f0ede4;
-    --stamp-r: #c0392b;
-    --stamp-b: #1a5276;
-    --stamp-g: #1e8449;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--bg);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 16px 60px;
-    color: var(--accent);
-  }
-
-  /* ── 탭 네비게이션 ── */
-  .tab-nav {
-    display: flex;
-    gap: 0;
-    margin-bottom: 16px;
-    background: var(--accent);
-    border-radius: 8px;
-    overflow: hidden;
-    width: 794px;
-  }
-  .tab-nav button {
-    flex: 1;
-    padding: 11px 20px;
-    border: none;
-    background: transparent;
-    color: #888;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    letter-spacing: .04em;
-    transition: all .15s;
-    border-right: 1px solid #333;
-  }
-  .tab-nav button:last-child { border-right: none; }
-  .tab-nav button.active { background: #fff; color: var(--accent); }
-  .tab-nav button:hover:not(.active) { background: #2a2a2a; color: #fff; }
-
-  /* ── 툴바 ── */
-  .toolbar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    background: var(--accent);
-    padding: 10px 18px;
-    border-radius: 8px;
-    align-items: center;
-    flex-wrap: wrap;
-    width: 794px;
-  }
-  .toolbar span {
-    color: #aaa;
-    font-size: 11px;
-    letter-spacing: .05em;
-    margin-right: 6px;
-  }
-  .btn {
-    padding: 7px 18px;
-    border: none;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 13px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: opacity .15s;
-  }
-  .btn:hover { opacity: .85; }
-  .btn-print { background: #fff; color: var(--accent); }
-  .btn-img   { background: #4a9eff; color: #fff; }
-  .btn-clear { background: #555; color: #ccc; }
-
-  /* ── 용지 ── */
-  .paper {
-    background: var(--paper);
-    width: 794px;
-    min-height: 1123px;
-    padding: 40px 45px;
-    box-shadow: 0 4px 32px rgba(0,0,0,.15);
-    border: 1px solid #ddd;
-    position: relative;
-  }
-
-  /* ── 지출결의서 공통 ── */
-  table.form {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 12px;
-  }
-  table.form td {
-    border: 1px solid var(--border);
-    padding: 4px 6px;
-    vertical-align: middle;
-    line-height: 1.5;
-    word-break: keep-all;
-  }
-  table.form input[type="text"],
-  table.form input[type="date"],
-  table.form input[type="number"],
-  table.form textarea {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: 12px;
-    color: var(--accent);
-    padding: 0;
-    resize: none;
-  }
-  table.form textarea { min-height: 16px; overflow: hidden; }
-
-  .label-cell {
-    background: var(--label-bg);
-    font-weight: 700;
-    text-align: center;
-    white-space: nowrap;
-    font-size: 11.5px;
-    letter-spacing: .03em;
-  }
-  .item-cat {
-    width: 100%; border: none; outline: none; background: transparent;
-    font-family: inherit; font-size: 11.5px; color: var(--accent);
-    cursor: pointer; text-align: center; padding: 0 2px;
-  }
-  .item-cat option { font-size: 12px; }
-  .header-row td { height: 72px; }
-  .title-cell {
-    font-size: 18px; font-weight: 700; text-align: center;
-    letter-spacing: .12em; vertical-align: middle;
-  }
-  .stamp-box { width: 60px; text-align: center; vertical-align: top; padding: 0 !important; }
-  .stamp-inner { display: flex; flex-direction: column; height: 70px; }
-  .stamp-title {
-    background: var(--label-bg); font-size: 10px; font-weight: 700;
-    padding: 3px 0; text-align: center; border-bottom: 1px solid var(--border);
-  }
-  .stamp-area { flex: 1; display: flex; align-items: center; justify-content: center; padding: 4px; }
-  .stamp-area input {
-    width: 100%; border: none; background: transparent; font-family: inherit;
-    font-size: 11px; text-align: center; outline: none; color: var(--stamp-b); font-weight: 600;
-  }
-  .amount-row td { height: 42px; }
-  .item-row td { height: 65px; }
-  .subtotal-row td { background: var(--label-bg); font-weight: 700; text-align: center; }
-  .footer-row td { text-align: center; font-size: 11.5px; padding: 6px 8px; }
-  .date-display { font-size: 13px; font-weight: 600; letter-spacing: .05em; }
-  .recipient-row td { height: 40px; }
-  .company-row td {
-    text-align: center; font-size: 14px; font-weight: 700;
-    letter-spacing: .2em; padding: 6px;
-  }
-
-  /* ══ 간이 명세서 스타일 ══ */
-  .inv-paper {
-    background: var(--paper);
-    width: 794px;
-    min-height: auto;
-    padding: 40px 45px 60px;
-    box-shadow: 0 4px 32px rgba(0,0,0,.15);
-    border: 1px solid #ddd;
-  }
-
-  .inv-title {
-    text-align: center;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: .2em;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--border);
-  }
-
-  table.inv-main {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-    margin-bottom: 0;
-  }
-  table.inv-main td, table.inv-main th {
-    border: 1px solid var(--border);
-    padding: 5px 7px;
-    vertical-align: middle;
-  }
-  table.inv-main th {
-    background: var(--label-bg);
-    font-weight: 700;
-    text-align: center;
-    font-size: 11.5px;
-    letter-spacing: .03em;
-  }
-  table.inv-main input[type="text"],
-  table.inv-main input[type="number"],
-  table.inv-main input[type="date"] {
-    width: 100%; border: none; outline: none; background: transparent;
-    font-family: inherit; font-size: 12px; color: var(--accent); padding: 0;
-  }
-
-  /* ── 공급받는자/공급자 통합 테이블 ── */
-  .inv-unified-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    font-size: 12px;
-    margin-bottom: 0;
-  }
-  .inv-unified-table td {
-    border: 1px solid var(--border);
-    padding: 5px 7px;
-    vertical-align: middle;
-    word-break: break-all;
-    overflow-wrap: break-word;
-  }
-  .inv-section-hd {
-    background: var(--label-bg);
-    font-weight: 700;
-    font-size: 11.5px;
-    text-align: center;
-    letter-spacing: .06em;
-    padding: 5px 0 !important;
-    border: 1px solid var(--border);
-  }
-  .inv-divider {
-    border: none !important;
-    background: var(--bg);
-    width: 10px;
-    padding: 0 !important;
-  }
-  .ulbl {
-    background: var(--label-bg);
-    font-weight: 700;
-    font-size: 11px;
-    text-align: center;
-    white-space: nowrap;
-    border: 1px solid var(--border);
-  }
-  .inv-unified-table textarea {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: 12px;
-    color: var(--accent);
-    resize: none;
-    overflow: hidden;
-    line-height: 1.5;
-    padding: 0;
-    display: block;
-    min-height: 18px;
-    word-break: break-all;
-  }
-  .inv-fixed {
-    font-size: 12px;
-    color: var(--accent);
-    word-break: break-all;
-    overflow-wrap: break-word;
-  }
-
-  .inv-items-table {
-    width: 100%; border-collapse: collapse; font-size: 12px;
-  }
-  .inv-items-table th {
-    background: var(--label-bg); font-weight: 700; text-align: center;
-    font-size: 11px; border: 1px solid var(--border); padding: 5px 4px;
-    letter-spacing: .02em;
-  }
-  .inv-items-table td {
-    border: 1px solid var(--border); padding: 4px 5px; vertical-align: middle;
-  }
-  .inv-items-table td input {
-    width: 100%; border: none; outline: none; background: transparent;
-    font-family: inherit; font-size: 12px; color: var(--accent);
-    text-align: center; padding: 0;
-  }
-  .inv-items-table td input.right { text-align: right; }
-  .inv-items-table .inv-calc { text-align: right; font-size: 12px; padding: 4px 6px; }
-  .inv-foot td {
-    background: var(--label-bg); font-weight: 700; font-size: 12px;
-    border: 1px solid var(--border); padding: 5px 7px; text-align: center;
-  }
-  .inv-foot .right { text-align: right; }
-
-  /* (inv-section-title 제거됨 → inv-section-hd로 통합) */
-
-  /* no-print: 인쇄/이미지 저장 시 숨김 */
-  .no-print { /* 화면에서는 표시 */ }
-
-  /* 인쇄 */
-  @media print {
-    @page { size: A4; margin: 0; }
-    body { background: white; padding: 0; }
-    .toolbar, .tab-nav { display: none !important; }
-    .no-print { display: none !important; }
-    .paper, .inv-paper {
-      box-shadow: none; border: none; margin: 0;
-      padding: 40px 45px; width: 794px; min-height: 1123px;
-    }
-    table.form input, table.form textarea,
-    table.inv-main input, .inv-party-table input, .inv-items-table td input {
-      -webkit-print-color-adjust: exact; print-color-adjust: exact;
-    }
-    input::placeholder, textarea::placeholder { color: transparent !important; }
-    .inv-party-table input::placeholder { color: transparent !important; }
-    .inv-items-table td input::placeholder { color: transparent !important; }
-    select option[value=""] { display: none; }
-    .item-cat { color: inherit; }
-    #expense-section, #invoice-section { display: block !important; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한신우동 센터별 납품 대시보드</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:-apple-system,'Apple SD Gothic Neo','Malgun Gothic','맑은 고딕',sans-serif;background:#f0f2f5;color:#111;padding:16px;}
+    .wrap{max-width:960px;margin:0 auto;}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
+    .header-title{font-size:17px;font-weight:700;}
+    .header-period{font-size:12px;color:#666;background:#fff;border:1px solid #ddd;border-radius:6px;padding:4px 12px;}
+    .tab-bar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;}
+    .tab{font-size:13px;padding:7px 18px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#666;cursor:pointer;font-family:inherit;transition:all .15s;}
+    .tab.active{background:#1a1a2e;color:#fff;border-color:#1a1a2e;font-weight:600;}
+    .panel{display:none;}.panel.active{display:block;}
+    .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+    .kpi{background:#fff;border-radius:10px;padding:14px 16px;border:1px solid #e8e8e8;}
+    .kpi-label{font-size:11px;color:#888;margin-bottom:5px;}
+    .kpi-value{font-size:15px;font-weight:700;color:#111;line-height:1.4;}
+    .kpi-mr{font-size:12px;color:#2e7d32;margin-top:3px;font-weight:600;}
+    .card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:16px;margin-bottom:14px;}
+    .card-title{font-size:13px;font-weight:600;color:#444;margin-bottom:14px;}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+    .chart-wrap{position:relative;width:100%;}
+    .legend-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;font-size:12px;color:#666;}
+    .ld{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:middle;}
+    .tw{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;font-size:12px;}
+    th{color:#888;font-weight:600;padding:8px;border-bottom:2px solid #f0f0f0;text-align:right;white-space:nowrap;background:#fafafa;}
+    th:first-child,th.l{text-align:left;}
+    td{padding:8px;border-bottom:1px solid #f5f5f5;text-align:right;color:#111;}
+    td:first-child{text-align:left;color:#555;}
+    td.l{text-align:left;color:#111;}
+    tr.tot td{font-weight:700;background:#f7f7f7;border-top:2px solid #eee;border-bottom:none;color:#111;}
+    tr.tot td:first-child{color:#111;}
+    .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;background:#e8f5e9;color:#2e7d32;}
+    .ct{font-size:11px;color:#aaa;margin-bottom:14px;}
+    @media(max-width:520px){.grid-2{grid-template-columns:1fr;}.kpi-grid{grid-template-columns:1fr;}.kpi-value{font-size:13px;}}
+  </style>
 </head>
 <body>
-
-<!-- ══ 탭 네비게이션 ══ -->
-<div class="tab-nav">
-  <button class="active" onclick="switchTab('expense')">📋 지출결의서</button>
-  <button onclick="switchTab('invoice')">🧾 간이 명세서 (납부 영수증)</button>
-</div>
-
-<!-- ══════════════════════════════════
-     지출결의서 섹션
-══════════════════════════════════ -->
-<div id="expense-section">
-
-<div class="toolbar">
-  <span>회사명</span>
-  <select id="companySelect" onchange="changeCompany()" style="padding:6px 10px;border:none;border-radius:4px;font-family:inherit;font-size:13px;font-weight:600;background:#fff;color:#1a1a1a;cursor:pointer;outline:none;">
-    <option value="미스앤미스터(주)|미 스 앤 미 스 터 주 식 회 사">미스앤미스터(주)</option>
-    <option value="해피투게더(주)|해 피 투 게 더 주 식 회 사">해피투게더(주)</option>
-    <option value="도나스데이|도 나 스 데 이">도나스데이</option>
-    <option value="한신우동|한 신 우 동">한신우동</option>
-    <option value="도시농원(주)|도 시 농 원 주 식 회 사">도시농원(주)</option>
-  </select>
-  <button class="btn btn-print" onclick="window.print()">🖨 인쇄</button>
-  <button class="btn btn-img"   onclick="saveExpenseImage()">🖼 이미지 저장</button>
-  <button class="btn btn-clear" onclick="clearExpenseForm()">↺ 초기화</button>
-</div>
-
-<div class="paper" id="expense-paper">
-<table class="form">
-
-  <colgroup>
-    <col style="width:8%"><col style="width:6%"><col style="width:6%">
-    <col style="width:6%"><col style="width:6%"><col style="width:6%">
-    <col style="width:5%"><col style="width:5%"><col style="width:5%">
-    <col style="width:5%"><col style="width:5%"><col style="width:5%">
-    <col style="width:4%"><col style="width:4%"><col style="width:4%">
-    <col style="width:4%"><col style="width:4%"><col style="width:3%">
-    <col style="width:3%"><col style="width:3%"><col style="width:3%">
-    <col style="width:3%"><col style="width:3%"><col style="width:3%">
-    <col style="width:3%">
-  </colgroup>
-
-  <!-- Row 1: 제목 + 결재란 -->
-  <tr class="header-row">
-    <td colspan="16" class="title-cell" id="formTitle">미스앤미스터(주) 지출결의서</td>
-    <td colspan="3" class="stamp-box" style="padding:0!important;">
-      <div class="stamp-inner">
-        <div class="stamp-title">담&nbsp;&nbsp;당</div>
-        <div class="stamp-area"><input type="text" id="s1" placeholder=""></div>
-      </div>
-    </td>
-    <td colspan="3" class="stamp-box" style="padding:0!important;">
-      <div class="stamp-inner">
-        <div class="stamp-title">관&nbsp;&nbsp;리</div>
-        <div class="stamp-area"><input type="text" id="s2" placeholder=""></div>
-      </div>
-    </td>
-    <td colspan="3" class="stamp-box" style="padding:0!important;">
-      <div class="stamp-inner">
-        <div class="stamp-title">대&nbsp;&nbsp;표</div>
-        <div class="stamp-area"><input type="text" id="s3" placeholder=""></div>
-      </div>
-    </td>
-  </tr>
-
-  <!-- Row 2: 지출일자 / 직급 / 성명 -->
-  <tr style="height:40px;">
-    <td colspan="5" class="label-cell">지 출 일 자</td>
-    <td colspan="6"><input type="date" id="expDate" onchange="updateDateDisplay()"></td>
-    <td colspan="3" class="label-cell">직&nbsp;&nbsp;&nbsp;급</td>
-    <td colspan="4"><input type="text" id="rank" placeholder="직급 입력"></td>
-    <td colspan="2" class="label-cell">성명</td>
-    <td colspan="5"><input type="text" id="expName" placeholder="성명 입력" oninput="document.getElementById('recipient').value=this.value"></td>
-  </tr>
-
-  <!-- Row 3: 지출금액 -->
-  <tr class="amount-row">
-    <td colspan="5" class="label-cell">지 출 금 액</td>
-    <td colspan="2" class="label-cell" style="font-size:11px;">일 금</td>
-    <td colspan="8" style="font-size:12.5px;font-weight:700;letter-spacing:.03em;color:#1a1a1a;">
-      <span id="amountKor" style="display:block;min-height:18px;"></span>
-    </td>
-    <td colspan="2" style="text-align:center;font-size:11px;white-space:nowrap;border-right:none;">(₩</td>
-    <td colspan="7" style="text-align:right;font-weight:700;font-size:13px;padding-right:0;border-left:none;border-right:none;">
-      <span id="amountNum" style="display:block;text-align:right;min-height:18px;"></span>
-    </td>
-    <td style="font-size:11px;border-left:none;">)</td>
-  </tr>
-
-  <!-- Row 4: 제목 / 지급방법 -->
-  <tr style="height:40px;">
-    <td colspan="5" class="label-cell">제&nbsp;&nbsp;&nbsp;&nbsp;목</td>
-    <td colspan="10"><input type="text" id="subject" placeholder="제목 입력"></td>
-    <td colspan="10" style="text-align:center;">
-      <label style="cursor:pointer;margin-right:12px;">
-        <input type="radio" name="payMethod" value="cash" style="width:auto;cursor:pointer;"> 현금
-      </label>
-      <label style="cursor:pointer;">
-        <input type="radio" name="payMethod" value="card" style="width:auto;cursor:pointer;"> 카드
-      </label>
-    </td>
-  </tr>
-
-  <!-- Row 5: 헤더 행 -->
-  <tr style="height:34px;">
-    <td colspan="5" class="label-cell">구&nbsp;&nbsp;&nbsp;&nbsp;분</td>
-    <td colspan="9" class="label-cell">내&nbsp;&nbsp;&nbsp;&nbsp;역</td>
-    <td colspan="6" class="label-cell">금&nbsp;&nbsp;&nbsp;&nbsp;액</td>
-    <td colspan="5" class="label-cell">비&nbsp;&nbsp;&nbsp;&nbsp;고</td>
-  </tr>
-
-  <!-- 내역 입력 행 (9개) -->
-  <tr class="item-row" id="row0">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row1">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row2">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row3">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row4">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row5">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row6">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row7">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-  <tr class="item-row" id="row8">
-    <td colspan="5" style="padding:2px 4px;"><select class="item-cat"><option value="">-- 선택 --</option><optgroup label="── 일반경비 ──"><option>소모품비</option><option>차량유지비</option><option>식대</option><option>경조사비</option><option>원부자재</option></optgroup><optgroup label="── 세무지출 ──"><option>접대비</option><option>복리후생비</option><option>여비교통비</option><option>교육훈련비</option><option>광고선전비</option><option>임차료</option><option>수수료</option><option>수선비</option><option>비품구매</option></optgroup></select></td>
-    <td colspan="9" style="padding:4px 6px;vertical-align:top;"><textarea class="item-desc" placeholder="내역 입력" rows="2"></textarea></td>
-    <td colspan="6"><input type="text" class="item-amt" placeholder="0" oninput="formatAmt(this)" style="text-align:right;font-variant-numeric:tabular-nums;"></td>
-    <td colspan="5"><input type="text" class="item-note" placeholder="비고"></td>
-  </tr>
-
-  <!-- 합계 행 -->
-  <tr class="subtotal-row" style="height:40px;">
-    <td colspan="5" class="label-cell">합&nbsp;&nbsp;&nbsp;계</td>
-    <td colspan="9"><input type="text" id="totalDesc" placeholder="합계 내역 (선택)"></td>
-    <td colspan="6" style="text-align:right;font-size:13px;" id="totalDisplay">0</td>
-    <td colspan="5"></td>
-  </tr>
-
-  <tr style="height:24px;"><td colspan="25" style="border:none;"></td></tr>
-
-  <tr>
-    <td colspan="25" style="font-size:13.5px;letter-spacing:.04em;border:none;text-align:center;padding:10px 0 4px;">
-      위 금액을 청구하오니 결재 바랍니다.
-    </td>
-  </tr>
-
-  <tr>
-    <td colspan="25" style="border:none;text-align:center;padding:4px 0 8px;">
-      <span class="date-display" id="dateDisplay"></span>
-    </td>
-  </tr>
-
-  <tr class="recipient-row">
-    <td colspan="7" class="label-cell">영 수 인 :</td>
-    <td colspan="13" style="border-right:none;"><input type="text" id="recipient" placeholder="영수인 이름 입력"></td>
-    <td colspan="4" style="text-align:center;font-weight:700;border-left:none;border-right:none;">(인)</td>
-    <td colspan="1" style="border-left:none;"></td>
-  </tr>
-
-  <tr style="height:24px;"><td colspan="25" style="border:none;"></td></tr>
-
-  <tr>
-    <td colspan="25" class="company-row" style="border-left:none;border-right:none;border-bottom:none;text-align:center;">
-      <span id="companyName">미 스 앤 미 스 터 주 식 회 사</span>
-    </td>
-  </tr>
-
-</table>
-</div>
-</div><!-- /expense-section -->
-
-
-<!-- ══════════════════════════════════
-     간이 명세서 (납부 영수증) 섹션
-══════════════════════════════════ -->
-<div id="invoice-section" style="display:none;">
-
-<div class="toolbar">
-  <span>공급자</span>
-  <select id="invCompanySelect" onchange="changeInvCompany()" style="padding:6px 10px;border:none;border-radius:4px;font-family:inherit;font-size:13px;font-weight:600;background:#fff;color:#1a1a1a;cursor:pointer;outline:none;">
-    <option value="missmister">미스앤미스터(주)</option>
-    <option value="happytogether">해피투게더(주)</option>
-    <option value="hanshinudon">한신우동</option>
-    <option value="cityfarming">도시농원(주)</option>
-  </select>
-  <button class="btn btn-print" onclick="printInvoice()">🖨 인쇄</button>
-  <button class="btn btn-img"   onclick="saveInvoiceImage()">🖼 이미지 저장</button>
-  <button class="btn btn-clear" onclick="clearInvoiceForm()">↺ 초기화</button>
-</div>
-
-<div class="inv-paper" id="invoice-paper">
-
-  <div class="inv-title">납 &nbsp; 부 &nbsp; 영 &nbsp; 수 &nbsp; 증</div>
-
-  <!-- 공급받는자 / 공급자: 단일 테이블로 행 높이 일치 -->
-  <table class="inv-unified-table">
-    <colgroup>
-      <!-- 공급받는 자 쪽 -->
-      <col style="width:70px">  <!-- 라벨 -->
-      <col>                      <!-- 값1 -->
-      <col style="width:35px">  <!-- 서브라벨 -->
-      <col>                      <!-- 값2 -->
-      <!-- 구분선 -->
-      <col style="width:10px">
-      <!-- 공급자 쪽 -->
-      <col style="width:70px">  <!-- 라벨 -->
-      <col>                      <!-- 값1 -->
-      <col style="width:35px">  <!-- 서브라벨 -->
-      <col>                      <!-- 값2 -->
-    </colgroup>
-    <!-- 헤더행 -->
-    <tr>
-      <td colspan="4" class="inv-section-hd">공 급 받 는 자</td>
-      <td class="inv-divider" rowspan="5"></td>
-      <td colspan="4" class="inv-section-hd">공 급 자</td>
-    </tr>
-    <!-- 행1: 상호/성명 -->
-    <tr>
-      <td class="ulbl">상호(법인명)</td>
-      <td><textarea id="i-buyer-biz" placeholder="상호명 입력" rows="1" oninput="autoGrow(this)"></textarea></td>
-      <td class="ulbl">성명</td>
-      <td><textarea id="i-buyer-name" placeholder="성명" rows="1" oninput="autoGrow(this)"></textarea></td>
-
-      <td class="ulbl">상호(법인명)</td>
-      <td class="inv-fixed" id="sup-biz">미스앤미스터㈜</td>
-      <td class="ulbl">성명</td>
-      <td class="inv-fixed" id="sup-name">공호식, 박정혜</td>
-    </tr>
-    <!-- 행2: 등록번호(공급자) / 사업장주소(공급받는자) -->
-    <tr>
-      <td class="ulbl">사업장 주소</td>
-      <td colspan="3"><textarea id="i-buyer-addr" placeholder="주소 입력" rows="1" oninput="autoGrow(this)"></textarea></td>
-
-      <td class="ulbl">등록번호</td>
-      <td colspan="3" class="inv-fixed" id="sup-regno">811-88-00636</td>
-    </tr>
-    <!-- 행3: 전화/팩스 -->
-    <tr>
-      <td class="ulbl">전화번호</td>
-      <td><textarea id="i-buyer-tel" placeholder="000-0000-0000" rows="1" oninput="autoGrow(this)"></textarea></td>
-      <td class="ulbl">팩스</td>
-      <td><textarea id="i-buyer-fax" placeholder="팩스번호" rows="1" oninput="autoGrow(this)"></textarea></td>
-
-      <td class="ulbl">사업장 주소</td>
-      <td colspan="3" class="inv-fixed" id="sup-addr">경기도 수원시 팔달구 효원로291번길53, 6층 602-1호</td>
-    </tr>
-    <!-- 행4: 합계금액(공급받는자) / 전화+팩스(공급자) -->
-    <tr>
-      <td class="ulbl">합계금액</td>
-      <td colspan="3" id="i-buyer-total" style="font-weight:700;font-size:13px;">-</td>
-
-      <td class="ulbl">전화번호</td>
-      <td class="inv-fixed" id="sup-tel">031)548-1334</td>
-      <td class="ulbl">팩스</td>
-      <td class="inv-fixed" id="sup-fax">031-548-1336</td>
-    </tr>
-  </table>
-
-  <!-- 품목 테이블 -->
-  <div style="margin-top:16px;">
-    <table class="inv-items-table" id="inv-items-table">
-      <thead>
-        <tr>
-          <th style="width:42px;">년</th>
-          <th style="width:30px;">월</th>
-          <th style="width:30px;">일</th>
-          <th>품 목</th>
-          <th style="width:65px;">규 격</th>
-          <th style="width:52px;">수 량</th>
-          <th style="width:80px;">단 가</th>
-          <th style="width:90px;">공급가액</th>
-          <th style="width:75px;">세 액</th>
-          <th class="no-print" style="width:28px;background:var(--label-bg);border:1px solid var(--border);">삭제</th>
-        </tr>
-      </thead>
-      <tbody id="inv-tbody"></tbody>
-      <tfoot>
-        <tr class="inv-foot">
-          <td colspan="5" style="text-align:center;letter-spacing:.06em;">각 &nbsp; 합 &nbsp; 계</td>
-          <td class="right" id="if-qty">-</td>
-          <td></td>
-          <td class="right" id="if-supply">-</td>
-          <td class="right" id="if-tax">-</td>
-          <td class="no-print" style="background:var(--label-bg);border:1px solid var(--border);"></td>
-        </tr>
-        <tr class="no-print">
-          <td colspan="10" style="border:none;padding:8px 0;">
-            <button onclick="addInvRow()"
-              style="width:100%;padding:7px 0;background:#27ae60;color:#fff;border:none;border-radius:4px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.04em;">
-              ＋ 품목 행 추가
-            </button>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+<div class="wrap">
+  <div class="header">
+    <p class="header-title">한신우동 센터별 납품 대시보드</p>
+    <span class="header-period">정산기간 2026.06.01 – 2026.06.25</span>
+  </div>
+  <div class="tab-bar">
+    <button class="tab active" onclick="sp('sfn',this)">SFN</button>
+    <button class="tab" onclick="sp('aone',this)">에이원서울유통</button>
+    <button class="tab" onclick="sp('suc',this)">성공스토리</button>
+    <button class="tab" onclick="sp('spc',this)">SPC GFS</button>
   </div>
 
-  <!-- 비고 -->
-  <table style="width:100%;border-collapse:collapse;margin-top:8px;">
-    <tr>
-      <td style="width:55px;background:var(--label-bg);font-weight:700;font-size:11px;text-align:center;border:1px solid var(--border);padding:5px;">비 고</td>
-      <td style="border:1px solid var(--border);padding:5px 8px;">
-        <input type="text" id="i-note" placeholder="특이사항 기입" style="width:100%;border:none;outline:none;background:transparent;font-family:inherit;font-size:12px;">
-      </td>
-    </tr>
-  </table>
+  <!-- SFN -->
+  <div class="panel active" id="panel-sfn">
+    <p class="ct">센터 · SFN</p>
+    <div class="kpi-grid">
+      <div class="kpi"><p class="kpi-label">총 매입합계</p><p class="kpi-value">284,032,210원</p></div>
+      <div class="kpi"><p class="kpi-label">총 판매합계</p><p class="kpi-value">452,813,508원</p></div>
+      <div class="kpi"><p class="kpi-label">추정 마진</p><p class="kpi-value">168,781,298원</p><p class="kpi-mr">마진율 37.3%</p></div>
+    </div>
+    <div class="card">
+      <p class="card-title">주차별 매입 · 판매 · 마진 비교</p>
+      <div class="legend-row">
+        <span><span class="ld" style="background:#378ADD"></span>매입합계</span>
+        <span><span class="ld" style="background:#1D9E75"></span>판매합계</span>
+        <span><span class="ld" style="background:#E67E22"></span>마진</span>
+      </div>
+      <div class="chart-wrap" style="height:240px"><canvas id="sfn_week"></canvas></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <p class="card-title">거래처별 판매 비중</p>
+        <div class="chart-wrap" style="height:220px"><canvas id="sfn_pie"></canvas></div>
+      </div>
+      <div class="card">
+        <p class="card-title">거래처별 마진율</p>
+        <div class="chart-wrap" style="height:220px"><canvas id="sfn_mr"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <p class="card-title">품목별 상세</p>
+      <div class="tw"><table>
+        <colgroup><col style="width:13%"><col style="width:30%"><col style="width:6%"><col style="width:6%"><col style="width:13%"><col style="width:13%"><col style="width:8%"></colgroup>
+        <thead><tr><th>거래처</th><th class="l">품목명</th><th>단위</th><th>수량</th><th>매입합계</th><th>판매합계</th><th>마진율</th></tr></thead>
+        <tbody>
+          <tr><td>㈜삼진푸드</td><td class="l">[한신] 삼진 모듬꼬치어묵</td><td>BX</td><td>600</td><td>39,600,000</td><td>41,685,600</td><td><span class="badge">5.0%</span></td></tr>
+          <tr><td>㈜아주</td><td class="l">[한신] 돈까스트레이</td><td>BX</td><td>119</td><td>4,974,200</td><td>7,251,729</td><td><span class="badge">31.4%</span></td></tr>
+          <tr><td>손맛</td><td class="l">[한신] 좋아한다면 황면</td><td>BX</td><td>3,395</td><td>82,159,000</td><td>133,736,177</td><td><span class="badge">38.6%</span></td></tr>
+          <tr><td>와이비에프에스</td><td class="l">[한신/도시농원] 감자튀김채전</td><td>BX</td><td>293</td><td>7,266,600</td><td>10,396,406</td><td><span class="badge">30.1%</span></td></tr>
+          <tr><td>와이비에프에스</td><td class="l">[한신] 고추튀김</td><td>BX</td><td>80</td><td>9,680,000</td><td>11,972,400</td><td><span class="badge">19.1%</span></td></tr>
+          <tr><td>이지커뮤니케이션</td><td class="l">[한신] 맛 구분 스티커_매운맛</td><td>BX</td><td>6</td><td>59,400</td><td>102,933</td><td><span class="badge">42.3%</span></td></tr>
+          <tr><td>이지커뮤니케이션</td><td class="l">[한신] 맛 구분 스티커_보통맛</td><td>BX</td><td>8</td><td>79,200</td><td>137,244</td><td><span class="badge">42.3%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">[한신] 매운다대기</td><td>BX</td><td>157</td><td>10,601,800</td><td>19,719,556</td><td><span class="badge">46.2%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">[한신] 매운돈까스소스</td><td>BX</td><td>303</td><td>12,998,700</td><td>18,947,438</td><td><span class="badge">31.4%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">[한신] 비빔양념장</td><td>BX</td><td>85</td><td>3,740,000</td><td>5,245,350</td><td><span class="badge">28.7%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">[한신] 아주매운다대기</td><td>BX</td><td>65</td><td>4,576,000</td><td>8,623,972</td><td><span class="badge">46.9%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">[한신] 옛날돈까스소스</td><td>BX</td><td>1,012</td><td>34,731,840</td><td>59,538,388</td><td><span class="badge">41.7%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">[한신] 해물우동육수</td><td>BX</td><td>819</td><td>58,164,810</td><td>115,092,377</td><td><span class="badge">49.5%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">[한신] 해장냉우동육수</td><td>BX</td><td>210</td><td>6,722,100</td><td>10,543,995</td><td><span class="badge">36.2%</span></td></tr>
+          <tr><td>티와이팩</td><td class="l">[한신] TY-2145 짜장용기</td><td>BX</td><td>35</td><td>2,525,600</td><td>3,023,790</td><td><span class="badge">16.5%</span></td></tr>
+          <tr><td>티와이팩</td><td class="l">[한신] TY-2167 짬뽕용기</td><td>BX</td><td>36</td><td>2,914,560</td><td>3,406,392</td><td><span class="badge">14.4%</span></td></tr>
+          <tr><td>티와이팩</td><td class="l">[한신] 실링기필름</td><td>BX</td><td>32</td><td>3,238,400</td><td>3,389,760</td><td><span class="badge">4.5%</span></td></tr>
+          <tr class="tot"><td>총합계</td><td class="l"></td><td></td><td>7,257</td><td>284,032,210</td><td>452,813,508</td><td><span class="badge">37.3%</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
 
-</div><!-- /inv-paper -->
-</div><!-- /invoice-section -->
+  <!-- 에이원서울유통 -->
+  <div class="panel" id="panel-aone">
+    <p class="ct">센터 · 에이원서울유통</p>
+    <div class="kpi-grid">
+      <div class="kpi"><p class="kpi-label">총 매입합계</p><p class="kpi-value">48,262,389원</p></div>
+      <div class="kpi"><p class="kpi-label">총 판매합계</p><p class="kpi-value">57,173,840원</p></div>
+      <div class="kpi"><p class="kpi-label">추정 마진</p><p class="kpi-value">8,911,450원</p><p class="kpi-mr">마진율 15.6%</p></div>
+    </div>
+    <div class="card">
+      <p class="card-title">주차별 매입 · 판매 · 마진 비교</p>
+      <div class="legend-row">
+        <span><span class="ld" style="background:#378ADD"></span>매입합계</span>
+        <span><span class="ld" style="background:#1D9E75"></span>판매합계</span>
+        <span><span class="ld" style="background:#E67E22"></span>마진</span>
+      </div>
+      <div class="chart-wrap" style="height:240px"><canvas id="aone_week"></canvas></div>
+    </div>
+    <div class="card">
+      <p class="card-title">품목별 상세</p>
+      <div class="tw"><table>
+        <colgroup><col style="width:14%"><col style="width:28%"><col style="width:7%"><col style="width:7%"><col style="width:13%"><col style="width:13%"><col style="width:8%"></colgroup>
+        <thead><tr><th>거래처</th><th class="l">품목명</th><th>단위</th><th>수량</th><th>매입합계</th><th>판매합계</th><th>마진율</th></tr></thead>
+        <tbody>
+          <tr><td>삼진식품(주)</td><td class="l">삼진모듬꼬지어묵</td><td>BX</td><td>320</td><td>21,119,999</td><td>21,992,960</td><td><span class="badge">4.0%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">매운다대기</td><td>BX</td><td>50</td><td>3,354,999</td><td>4,862,000</td><td><span class="badge">31.0%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">해물우동육수</td><td>BX</td><td>250</td><td>17,737,499</td><td>23,057,500</td><td><span class="badge">23.1%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">해장냉우동육수</td><td>BX</td><td>189</td><td>6,049,890</td><td>7,261,380</td><td><span class="badge">16.7%</span></td></tr>
+          <tr class="tot"><td>총합계</td><td class="l"></td><td></td><td>809</td><td>48,262,389</td><td>57,173,840</td><td><span class="badge">15.6%</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
 
-<!-- html2canvas -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- 성공스토리 -->
+  <div class="panel" id="panel-suc">
+    <p class="ct">센터 · 성공스토리</p>
+    <div class="kpi-grid">
+      <div class="kpi"><p class="kpi-label">총 매입합계</p><p class="kpi-value">10,908,699원</p></div>
+      <div class="kpi"><p class="kpi-label">총 판매합계</p><p class="kpi-value">13,521,450원</p></div>
+      <div class="kpi"><p class="kpi-label">추정 마진</p><p class="kpi-value">2,612,750원</p><p class="kpi-mr">마진율 19.3%</p></div>
+    </div>
+    <div class="card">
+      <p class="card-title">주차별 매입 · 판매 · 마진 비교</p>
+      <div class="legend-row">
+        <span><span class="ld" style="background:#378ADD"></span>매입합계</span>
+        <span><span class="ld" style="background:#1D9E75"></span>판매합계</span>
+        <span><span class="ld" style="background:#E67E22"></span>마진</span>
+      </div>
+      <div class="chart-wrap" style="height:240px"><canvas id="suc_week"></canvas></div>
+    </div>
+    <div class="card">
+      <p class="card-title">품목별 상세</p>
+      <div class="tw"><table>
+        <colgroup><col style="width:14%"><col style="width:28%"><col style="width:7%"><col style="width:7%"><col style="width:13%"><col style="width:13%"><col style="width:8%"></colgroup>
+        <thead><tr><th>거래처</th><th class="l">품목명</th><th>단위</th><th>수량</th><th>매입합계</th><th>판매합계</th><th>마진율</th></tr></thead>
+        <tbody>
+          <tr><td>삼진식품(주)</td><td class="l">[한신] 삼진 모듬꼬치어묵</td><td>BX</td><td>50</td><td>3,299,999</td><td>3,436,400</td><td><span class="badge">4.0%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">매운다대기</td><td>BX</td><td>20</td><td>1,341,999</td><td>1,944,800</td><td><span class="badge">31.0%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">비빔양념장</td><td>BX</td><td>15</td><td>660,000</td><td>915,749</td><td><span class="badge">27.9%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">해물우동육수</td><td>BX</td><td>70</td><td>4,966,499</td><td>6,456,100</td><td><span class="badge">23.1%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">해장냉우동육수</td><td>BX</td><td>20</td><td>640,200</td><td>768,400</td><td><span class="badge">16.7%</span></td></tr>
+          <tr class="tot"><td>총합계</td><td class="l"></td><td></td><td>175</td><td>10,908,699</td><td>13,521,450</td><td><span class="badge">19.3%</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
 
+  <!-- SPC GFS -->
+  <div class="panel" id="panel-spc">
+    <p class="ct">센터 · SPC GFS</p>
+    <div class="kpi-grid">
+      <div class="kpi"><p class="kpi-label">총 매입합계</p><p class="kpi-value">8,131,200원</p></div>
+      <div class="kpi"><p class="kpi-label">총 판매합계</p><p class="kpi-value">10,084,910원</p></div>
+      <div class="kpi"><p class="kpi-label">추정 마진</p><p class="kpi-value">1,953,710원</p><p class="kpi-mr">마진율 19.4%</p></div>
+    </div>
+    <div class="card">
+      <p class="card-title">주차별 매입 · 판매 · 마진 비교</p>
+      <div class="legend-row">
+        <span><span class="ld" style="background:#378ADD"></span>매입합계</span>
+        <span><span class="ld" style="background:#1D9E75"></span>판매합계</span>
+        <span><span class="ld" style="background:#E67E22"></span>마진</span>
+      </div>
+      <div class="chart-wrap" style="height:240px"><canvas id="spc_week"></canvas></div>
+    </div>
+    <div class="card">
+      <p class="card-title">품목별 상세</p>
+      <div class="tw"><table>
+        <colgroup><col style="width:14%"><col style="width:28%"><col style="width:7%"><col style="width:7%"><col style="width:13%"><col style="width:13%"><col style="width:8%"></colgroup>
+        <thead><tr><th>거래처</th><th class="l">품목명</th><th>단위</th><th>수량</th><th>매입합계</th><th>판매합계</th><th>마진율</th></tr></thead>
+        <tbody>
+          <tr><td>삼진식품(주)</td><td class="l">삼진모듬꼬지어묵</td><td>BX</td><td>40</td><td>2,639,999</td><td>2,750,000</td><td><span class="badge">4.0%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">옛날돈까스소스</td><td>BX</td><td>25</td><td>858,000</td><td>1,455,300</td><td><span class="badge">41.0%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">해물우동육수</td><td>BX</td><td>45</td><td>3,192,749</td><td>4,150,575</td><td><span class="badge">23.1%</span></td></tr>
+          <tr><td>제이와이FD</td><td class="l">해장냉우동육수</td><td>BX</td><td>45</td><td>1,440,450</td><td>1,729,035</td><td><span class="badge">16.7%</span></td></tr>
+          <tr class="tot"><td>총합계</td><td class="l"></td><td></td><td>155</td><td>8,131,200</td><td>10,084,910</td><td><span class="badge">19.4%</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+</div>
 <script>
-/* ════════════════════════════════
-   탭 전환
-════════════════════════════════ */
-function switchTab(tab) {
-  const isExpense = tab === 'expense';
-  document.getElementById('expense-section').style.display = isExpense ? '' : 'none';
-  document.getElementById('invoice-section').style.display = isExpense ? 'none' : '';
-  document.querySelectorAll('.tab-nav button').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && isExpense) || (i === 1 && !isExpense));
+function sp(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  el.classList.add('active');
+}
+const B='#378ADD',G='#1D9E75',O='#E67E22';
+const weeks=['6월 1주차','6월 2주차','6월 3주차','6월 4주차'];
+const fo={size:11};
+const gy='rgba(0,0,0,0.05)';
+const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+
+function wkChart(id,buy,sell,mgn){
+  new Chart(document.getElementById(id),{
+    type:'bar',
+    data:{labels:weeks,datasets:[
+      {label:'매입',data:buy,backgroundColor:B+'BB'},
+      {label:'판매',data:sell,backgroundColor:G+'BB'},
+      {label:'마진',data:mgn,backgroundColor:O+'BB'},
+    ]},
+    options:{...base,scales:{
+      x:{ticks:{font:fo},grid:{display:false}},
+      y:{ticks:{callback:v=>(v/1000000).toFixed(0)+'M',font:fo},grid:{color:gy}}
+    }}
   });
 }
 
-/* ════════════════════════════════
-   지출결의서 로직 (기존 그대로)
-════════════════════════════════ */
-document.addEventListener('input', function(e) {
-  if (e.target.classList.contains('item-desc')) {
-    e.target.style.height = 'auto';
-    e.target.style.height = e.target.scrollHeight + 'px';
-  }
+wkChart('sfn_week',
+  [105555120,72539445,70246000,35691645],
+  [171172780,106927757,125132149,49580821],
+  [65617660,34388312,54886149,13889176]
+);
+wkChart('aone_week',
+  [15707999,20877999,0,11676389],
+  [17528980,26115740,0,13529120],
+  [1820980,5237740,0,1852730]
+);
+wkChart('suc_week',
+  [5549499,0,2059199,3299999],
+  [7472050,0,2613000,3436400],
+  [1922550,0,553800,136400]
+);
+wkChart('spc_week',
+  [2958450,0,0,5172749],
+  [3871835,0,0,6213075],
+  [913385,0,0,1040325]
+);
+
+new Chart(document.getElementById('sfn_pie'),{
+  type:'doughnut',
+  data:{
+    labels:['손맛','제이와이FD','㈜삼진푸드','와이비에프에스','티와이팩','기타'],
+    datasets:[{
+      data:[133736177,237711076,41685600,22368806,9819942,7492107],
+      backgroundColor:['#378ADD','#1D9E75','#E67E22','#9B59B6','#E74C3C','#95A5A6'],
+      borderWidth:2,borderColor:'#fff'
+    }]
+  },
+  options:{...base,cutout:'55%',plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:12}}}}
 });
 
-function formatAmt(el) {
-  const raw = el.value.replace(/[^0-9]/g, '');
-  el.value = raw ? parseInt(raw).toLocaleString('ko-KR') : '';
-  calcExpenseTotal();
-}
-
-function changeCompany() {
-  const val = document.getElementById('companySelect').value.split('|');
-  document.getElementById('formTitle').textContent = val[0] + ' 지출결의서';
-  document.getElementById('companyName').textContent = val[1];
-}
-
-function toKoreanNumber(n) {
-  if (!n || n === 0) return '영';
-  const units = ['', '일', '이', '삼', '사', '오', '육', '칠', '팔', '구'];
-  const pos   = ['', '십', '백', '천'];
-  const bigPos = ['', '만', '억', '조'];
-  let result = '', num = Math.abs(Math.floor(n)), bigIdx = 0;
-  while (num > 0) {
-    const chunk = num % 10000;
-    if (chunk !== 0) {
-      let chunkStr = '', tmp = chunk;
-      for (let i = 0; i < 4; i++) {
-        const d = tmp % 10;
-        if (d !== 0) chunkStr = (d === 1 && i > 0 ? '' : units[d]) + pos[i] + chunkStr;
-        tmp = Math.floor(tmp / 10);
-      }
-      result = chunkStr + bigPos[bigIdx] + result;
-    }
-    num = Math.floor(num / 10000); bigIdx++;
-  }
-  return result + '원정';
-}
-
-function calcExpenseTotal() {
-  const amts = document.querySelectorAll('.item-amt');
-  let sum = 0;
-  amts.forEach(a => { sum += parseInt(a.value.replace(/,/g, '')) || 0; });
-  document.getElementById('totalDisplay').textContent = sum.toLocaleString('ko-KR');
-  document.getElementById('amountKor').textContent = sum ? toKoreanNumber(sum) : '';
-  document.getElementById('amountNum').textContent  = sum ? sum.toLocaleString('ko-KR') : '';
-}
-
-function updateDateDisplay() {
-  const d = document.getElementById('expDate').value;
-  if (!d) { document.getElementById('dateDisplay').textContent = ''; return; }
-  const dt = new Date(d);
-  document.getElementById('dateDisplay').textContent =
-    `${dt.getFullYear()}년 ${dt.getMonth()+1}월 ${dt.getDate()}일`;
-}
-
-function saveExpenseImage() {
-  html2canvas(document.getElementById('expense-paper'), {
-    scale: 2, useCORS: true, backgroundColor: '#fffef9', logging: false,
-  }).then(canvas => {
-    const a = document.createElement('a');
-    a.download = `지출결의서_${document.getElementById('expDate').value || 'draft'}.png`;
-    a.href = canvas.toDataURL('image/png'); a.click();
-  });
-}
-
-function clearExpenseForm() {
-  if (!confirm('지출결의서 내용을 모두 초기화하시겠습니까?')) return;
-  document.querySelectorAll('#expense-paper input[type="text"], #expense-paper input[type="date"], textarea')
-    .forEach(el => el.value = '');
-  document.getElementById('amountKor').textContent = '';
-  document.getElementById('amountNum').textContent = '';
-  document.getElementById('totalDisplay').textContent = '0';
-  document.getElementById('dateDisplay').textContent = '';
-}
-
-/* ════════════════════════════════
-   간이 명세서 로직
-════════════════════════════════ */
-
-// 공급자 회사 데이터
-const INV_COMPANIES = {
-  missmister:   { biz:'미스앤미스터㈜',  name:'공호식, 박정혜', regno:'811-88-00636',  addr:'경기도 수원시 팔달구 효원로291번길53, 6층 602-1호',   tel:'031)548-1334',  fax:'031-548-1336' },
-  happytogether:{ biz:'해피투게더㈜',    name:'박정혜',         regno:'754-86-03262',  addr:'경기도 화성시 효행구 봉담읍 128',                       tel:'070-4153-2166', fax:'' },
-  hanshinudon:  { biz:'한신우동',         name:'박정혜',         regno:'108-51-01611',  addr:'경기도 수원시 팔달구 효원로291번길 53 1층',              tel:'031-233-7289',  fax:'' },
-  cityfarming:  { biz:'도시농원㈜',       name:'공호식',         regno:'730-88-03601',  addr:'경기도 수원시 팔달구 효원로291번길 53 602-1호',          tel:'031-548-1334',  fax:'031-548-1336' },
-};
-
-function changeInvCompany() {
-  const key = document.getElementById('invCompanySelect').value;
-  const c = INV_COMPANIES[key];
-  if (!c) return;
-  document.getElementById('sup-biz').textContent   = c.biz;
-  document.getElementById('sup-name').textContent  = c.name;
-  document.getElementById('sup-regno').textContent = c.regno;
-  document.getElementById('sup-addr').textContent  = c.addr;
-  document.getElementById('sup-tel').textContent   = c.tel;
-  document.getElementById('sup-fax').textContent   = c.fax;
-}
-
-// 수량/단가 콤마 포맷 처리
-function onInvNum(el, idx, field) {
-  const raw = el.value.replace(/[^0-9]/g, '');
-  invRows[idx][field] = raw;
-  const pos  = el.selectionStart;
-  const prev = el.value.length;
-  el.value   = raw ? parseInt(raw, 10).toLocaleString('ko-KR') : '';
-  const diff = el.value.length - prev;
-  try { el.setSelectionRange(pos + diff, pos + diff); } catch(e) {}
-  calcInvRow(idx);
-}
-
-// textarea 자동 높이 확장
-function autoGrow(el) {
-  el.style.height = 'auto';
-  el.style.height = el.scrollHeight + 'px';
-}
-
-// 단가 콤마 포맷
-function formatInvPrice(el) {
-  const raw = el.value.replace(/[^0-9]/g, '');
-  el.value = raw ? parseInt(raw).toLocaleString('ko-KR') : '';
-}
-
-let invRows = [];
-
-function addInvRow() {
-  const id = 'r' + Date.now();
-  invRows.push({ id, y:'', m:'', d:'', item:'', spec:'', qty:'', price:'' });
-  renderInvRows();
-}
-
-function removeInvRow(id) {
-  invRows = invRows.filter(r => r.id !== id);
-  renderInvRows();
-  calcInvTotals();
-}
-
-function renderInvRows() {
-  const tb = document.getElementById('inv-tbody');
-  tb.innerHTML = invRows.map((r, i) => `
-    <tr>
-      <td><input type="text" value="${r.y}" maxlength="4" placeholder="2026"
-          oninput="invRows[${i}].y=this.value" style="text-align:center;"></td>
-      <td><input type="text" value="${r.m}" maxlength="2" placeholder="05"
-          oninput="invRows[${i}].m=this.value" style="text-align:center;"></td>
-      <td><input type="text" value="${r.d}" maxlength="2" placeholder="21"
-          oninput="invRows[${i}].d=this.value" style="text-align:center;"></td>
-      <td><input type="text" value="${r.item}" placeholder="품목명"
-          oninput="invRows[${i}].item=this.value" style="text-align:left;"></td>
-      <td><input type="text" value="${r.spec}" placeholder="규격"
-          oninput="invRows[${i}].spec=this.value" style="text-align:center;"></td>
-      <td><input type="text" inputmode="numeric" value="${r.qty ? Number(r.qty).toLocaleString('ko-KR') : ''}" placeholder="0"
-          oninput="onInvNum(this,${i},'qty')" class="right"></td>
-      <td><input type="text" inputmode="numeric" value="${r.price ? Number(r.price).toLocaleString('ko-KR') : ''}" placeholder="0"
-          oninput="onInvNum(this,${i},'price')" class="right"></td>
-      <td class="inv-calc" id="inv-supply-${r.id}">-</td>
-      <td class="inv-calc" id="inv-tax-${r.id}">-</td>
-      <td class="no-print" style="text-align:center;border:1px solid var(--border);">
-        <button onclick="removeInvRow('${r.id}')"
-          style="background:none;border:none;cursor:pointer;color:#c0392b;font-size:14px;padding:0;line-height:1;">✕</button>
-      </td>
-    </tr>
-  `).join('');
-  invRows.forEach((_, i) => calcInvRow(i));
-}
-
-function calcInvRow(i) {
-  const r = invRows[i];
-  const qty = Number(r.qty) || 0;
-  const price = Number(r.price) || 0;
-  const supply = qty * price;
-  const tax = Math.round(supply * 0.1);
-  invRows[i]._supply = supply;
-  invRows[i]._tax = tax;
-  const supplyEl = document.getElementById('inv-supply-' + r.id);
-  const taxEl    = document.getElementById('inv-tax-'    + r.id);
-  if (supplyEl) supplyEl.textContent = supply ? supply.toLocaleString('ko-KR') : '-';
-  if (taxEl)    taxEl.textContent    = tax    ? tax.toLocaleString('ko-KR')    : '-';
-  calcInvTotals();
-}
-
-function calcInvTotals() {
-  const totalQty    = invRows.reduce((s, r) => s + (Number(r.qty) || 0), 0);
-  const totalSupply = invRows.reduce((s, r) => s + (r._supply || 0), 0);
-  const totalTax    = invRows.reduce((s, r) => s + (r._tax    || 0), 0);
-  const grandTotal  = totalSupply + totalTax;
-
-  document.getElementById('if-qty').textContent    = totalQty    ? totalQty.toLocaleString('ko-KR')    : '-';
-  document.getElementById('if-supply').textContent = totalSupply ? totalSupply.toLocaleString('ko-KR') : '-';
-  document.getElementById('if-tax').textContent    = totalTax    ? totalTax.toLocaleString('ko-KR')    : '-';
-  document.getElementById('i-buyer-total').textContent =
-    grandTotal ? '₩ ' + grandTotal.toLocaleString('ko-KR') : '-';
-}
-
-function saveInvoiceImage() {
-  const paper = document.getElementById('invoice-paper');
-
-  // ── 1) input/textarea → span 으로 교체 (html2canvas가 input 값을 못 읽는 문제 해결) ──
-  const replacements = [];
-  paper.querySelectorAll('input, textarea').forEach(el => {
-    const span = document.createElement('span');
-    span.textContent = el.value;
-    // 원본 스타일 그대로 복사
-    span.style.cssText = [
-      'display:block',
-      'font-family:inherit',
-      'font-size:12px',
-      'color:#1a1a1a',
-      'white-space:pre-wrap',
-      'word-break:break-all',
-      'line-height:1.5',
-      'min-height:16px',
-      el.style.textAlign ? 'text-align:' + el.style.textAlign : '',
-      el.classList.contains('right') ? 'text-align:right' : '',
-    ].filter(Boolean).join(';');
-    el.parentNode.insertBefore(span, el);
-    el.style.display = 'none';
-    replacements.push({ el, span });
-  });
-
-  // ── 2) no-print 요소 숨김 ──
-  const noPrint = paper.querySelectorAll('.no-print');
-  noPrint.forEach(el => { el.dataset.pv = el.style.display; el.style.display = 'none'; });
-
-  // ── 3) 캡처 ──
-  const h = paper.offsetHeight;
-  const w = paper.offsetWidth;
-
-  html2canvas(paper, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: '#fffef9',
-    logging: false,
-    width: w,
-    height: h,
-  }).then(canvas => {
-    // ── 4) 복원 ──
-    replacements.forEach(({ el, span }) => {
-      el.style.display = '';
-      span.parentNode.removeChild(span);
-    });
-    noPrint.forEach(el => { el.style.display = el.dataset.pv || ''; });
-
-    const a = document.createElement('a');
-    a.download = '납부영수증_' + new Date().toISOString().slice(0, 10) + '.png';
-    a.href = canvas.toDataURL('image/png');
-    a.click();
-  });
-}
-
-function printInvoice() {
-  // 인쇄 전 invoice-section 강제 표시 (탭이 숨겨진 경우 대비)
-  const sec = document.getElementById('invoice-section');
-  const prevDisplay = sec.style.display;
-  sec.style.display = '';
-  window.print();
-  sec.style.display = prevDisplay;
-}
-
-function clearInvoiceForm() {
-  if (!confirm('명세서 내용을 모두 초기화하시겠습니까?')) return;
-  ['i-buyer-biz','i-buyer-name','i-buyer-addr','i-buyer-tel','i-buyer-fax','i-note']
-    .forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.value = ''; el.style.height = 'auto'; }
-    });
-  document.getElementById('i-buyer-total').textContent = '-';
-  invRows = [];
-  renderInvRows();
-  calcInvTotals();
-}
-
-/* ── 초기 설정 ── */
-window.addEventListener('DOMContentLoaded', () => {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('expDate').value = today;
-  updateDateDisplay();
-  // 명세서 초기 빈 행 3개
-  addInvRow(); addInvRow(); addInvRow();
+new Chart(document.getElementById('sfn_mr'),{
+  type:'bar',
+  data:{
+    labels:['손맛','제이와이FD','와이비에프에스','㈜아주','이지커뮤','㈜삼진푸드','티와이팩'],
+    datasets:[{
+      data:[38.6,44.7,24.2,31.4,42.3,5.0,11.6],
+      backgroundColor:[B+'BB',G+'BB',O+'BB','#9B59B6BB','#1ABCBBBB','#E74C3CBB','#95A5A6BB']
+    }]
+  },
+  options:{...base,indexAxis:'y',scales:{
+    x:{ticks:{callback:v=>v+'%',font:fo},grid:{color:gy}},
+    y:{ticks:{font:{size:10}},grid:{display:false}}
+  }}
 });
 </script>
 </body>
